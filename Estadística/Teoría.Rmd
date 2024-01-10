@@ -17,18 +17,62 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introducción a la Probabilidad
 
+Para comenzar nuestro estudio de la estadística es necesario introducir y entender algunos conceptos básicos de probabilidad. La relacion entre probabilidad y estadística es muy estrecha, ya que la estadística se basa en la probabilidad para realizar inferencias sobre los datos. Es decir, la probabilidad proporciona el marco teórico para la estadística. La estadística, en esencia, es la aplicación de la probabilidad a los datos.
+
+Mientras que el objetivo de la estadística descriptiva es resumir y describir los datos, el objetivo de la estadística inferencial es realizar inferencias sobre los datos. Por ejemplo, estimar la media de una población a partir de una muestra. Por tanto, la estadística inferencial utiliza modelos de probabilidad para realizar inferencias sobre los datos.
+
+## Probabilidad
+
 La probabilidad es una medida que cuantifica la incertidumbre asociada a un evento o fenómeno. Se expresa como un número entre 0 y 1, donde 0 indica imposibilidad y 1 indica certeza absoluta.
 
-Para poder medir la probabilidad de un evento, es necesario definir varios conceptos básicos:
+La probabilidad se puede definir de tres formas diferentes:
+
+* Definición clásica
+* Definición frecuentista
+* Definición axiomática
+
+### Definición clásica
+
+La probabilidad clásica se define como la razón entre el número de resultados favorables y el número total de resultados posibles en un experimento aleatorio, asumiendo que todos los resultados son igualmente probables.
+
+Características:
+
+* $\Omega$ es finito: $\Omega = \{\omega_1, \omega_2, \dots, \omega_n\}$ y equiprobable $P(\omega_i) = 1/n$.
+* $A \subset \Omega$ es un suceso.
+* $P(A) = \frac{\text{casos favorables}}{\text{casos posibles}} = \frac{\text{casos favorables}}{\text{casos favorables} + \text{casos desfavorables}}$.
+
+### Definición frecuentista
+
+La interpretación frecuentista de la probabilidad define la probabilidad de un evento como el límite de su frecuencia relativa en una serie de ensayos que se repiten infinitamente.
+
+Características:
+
+* $\Omega$ es infinito: $\Omega = \{\omega_1, \omega_2, \dots, \omega_n\}$ y equiprobable $P(\omega_i) = 1/n$.
+* $A \subset \Omega$ es un suceso.
+* $P(A) = \lim_{n \to \infty} \frac{\text{casos favorables}}{\text{casos posibles}} = \lim_{n \to \infty} \frac{\text{casos favorables}}{\text{casos favorables} + \text{casos desfavorables}}$.
+
+### Definición axiomática
+
+La probabilidad axiomática se basa en un conjunto de axiomas propuestos por Andrey Kolmogorov en 1933. Estos axiomas establecen las propiedades fundamentales que debe cumplir cualquier medida de probabilidad.
+
+* **Axioma 1**: La probabilidad de cualquier evento es un número no negativo $0 \leq P(A) \leq 1$.
+* **Axioma 2**: La probabilidad del espacio muestral completo es 1. $P(\Omega) = 1$.
+* **Axioma 3**: Para cualquier secuencia de eventos mutuamente excluyentes (no pueden ocurrir al mismo tiempo), la probabilidad de que ocurra alguno de los eventos es igual a la suma de sus probabilidades individuales. $P(A \cup B) = P(A) + P(B)$. O expresado de otra forma, $P(\cup A_i) = \Sigma P(A_i)$.
+
+Estos axiomas permiten construir la teoría de la probabilidad de manera rigurosa y coherente, y son la base para la mayoría de las teorías modernas de probabilidad.
+
+## Eventos
+
+Un evento es una colección de posibles resultados de un experimento aleatorio. En otras palabras, es un subconjunto del espacio muestral, que es el conjunto de todos los posibles resultados del experimento. Para poder medir la probabilidad de un evento, es necesario definir varios conceptos básicos:
 
 * **Experimento aleatorio**. Es un experimento que se puede repetir en las mismas condiciones y que puede tener varios resultados posibles. Por ejemplo, lanzar un dado.
 * **Espacio muestral**. Es el conjunto de todos los posibles resultados de un experimento aleatorio. Se denota por $\Omega$.
-* **Suceso**. Es un subconjunto del espacio muestral. Se denota por $A$.
-* **Suceso elemental**. Es un elemento del espacio muestral. Se denota por $\omega$.
-* **Suceso seguro**. Es el suceso que contiene todos los elementos del espacio muestral. Se denota por $\Omega$.
-* **Suceso imposible**. Es el suceso que no contiene ningún elemento del espacio muestral. Se denota por $\emptyset$.
+* **Evento o suceso**. Es un subconjunto del espacio muestral. Se denota por $A$.
+* **Evento o suceso elemental**. Es un elemento del espacio muestral. Se denota por $\omega$.
+* **Evento o suceso seguro**. Es el suceso que contiene todos los elementos del espacio muestral. Se denota por $\Omega$.
+* **Evento o suceso imposible**. Es el suceso que no contiene ningún elemento del espacio muestral. Se denota por $\emptyset$.
 
-## Operaciones con sucesos
+## Operaciones con eventos
 
 * **Unión**. Se denota por $A \cup B$ y es el suceso que contiene todos los elementos de $A$ y $B$.
 * **Intersección**. Se denota por $A \cap B$ y es el suceso que contiene los elementos comunes de $A$ y $B$.
@@ -38,7 +82,7 @@ Para poder medir la probabilidad de un evento, es necesario definir varios conce
 ## Leyes de Conjuntos en Probabilidad
 
 * **Unión**. $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
-* **Intersección**. $P(A \cap B) = P(A) + P(B) - P(A \cup B)$
+* **Intersección**. $P(A \cap B) = P(A) + P(B) - P(A \cap B)$
 * **Complementario**. $P(A^c) = 1 - P(A)$
 * **Probabilidad total**. $P(A) = P(A \cap B) + P(A \cap B^c)$
 
@@ -141,66 +185,196 @@ Utilizaremos un ejemplo de calificaciones de estudiantes en R para ilustrar cóm
 
 ```{r}
 # Crear el vector con las calificaciones
-calificaciones <- c(5, 7, 8, 5, 10, 7, 6, 5, 9, 8)
+calificaciones <- c(5, 7, 8, 5, 3, 7, 6, 5, 9, 8)
 
 # Calcular la frecuencia absoluta
 frecuencia_absoluta <- table(calificaciones)
 
 # Calcular la frecuencia relativa
-frecuencia_relativa <- prop.table(frecuencia_absoluta) * 100
+frecuencia_relativa <- prop.table(frecuencia_absoluta)
 
 # Frecuencias acumuladas
-frecuencia_acumulada <- cumsum(table(colores_camisetas))
+frecuencia_acumulada <- cumsum(table(calificaciones))
 
 # Representación de las frecuencias
 tabla_frecuencias <- data.frame(
   "Calificación" = names(frecuencia_absoluta),
   "Frecuencia Absoluta" = as.integer(frecuencia_absoluta),
-  "Frecuencia Relativa" = frecuencia_relativa,
-  "Frecuencia Acumulada" = frecuencia_acumulada
+  "Frecuencia Relativa" = as.numeric(frecuencia_relativa),
+  "Frecuencia Acumulada" = as.integer(frecuencia_acumulada)
 )
-# Cambiar los nombres de las columnas con colnames()
 colnames(tabla_frecuencias) <- c("Calificación", "Frecuencia Absoluta", "Frecuencia Relativa", "Frecuencia Acumulada")
-
-tabla_frecuencias
+knitr::kable(tabla_frecuencias, caption = "Frecuencia Absoluta de Calificaciones")
 ```
 
+# Estadística Descriptiva
 
-# Estadística Descriptiva. Visualización de datos
+La estadística descriptiva es una rama de la estadística que se centra en la descripción de los datos. Su objetivo es resumir y organizar los datos para que sean más fáciles de entender y visualizar. Por tanto, la estadística descriptiva se puede utilizar para describir las características de un conjunto de datos, pero no para llegar a conclusiones más allá de los datos que tenemos o para realizar inferencias sobre una población.
 
-## Introducción
+## Medidas de tendencia central
 
-* Una variable
-  * Variables cualitativas y cuantitativas
-  * Tablas de frecuencias
-  * Representaciones gráficas
-* Dos variables
-  * Tablas de contingencia
-  * Representaciones gráficas
-  * Medidas de asociación
+Las medidas de tendencia central son estadísticas que resumen la posición central de un conjunto de datos. Son especialmente útiles para describir la distribución de datos numéricos continuos o discretos. Las medidas de tendencia central más comunes son la media, la mediana y la moda.
 
-## Resumen numérico y gráfico
-## Ejemplos
+### Media
 
-# Probabilidad
-## Definición de probabilidad
-## Probabilidad condicionada
-## Dependencia e independencia de sucesos
-## Teorema de Bayes
+La media es la medida de tendencia central más común. Se define como la suma de todos los valores dividida por el número de valores. La media es muy sensible a los valores atípicos, por lo que no es una buena medida de tendencia central cuando los datos tienen valores atípicos.
 
-# Variables aleatorias
-## Variables aleatorias discretas y continuas
-## Función de probabilidad puntual
-## Función de densidad de probabilidad
-## Función de distribución de probabilidad
+$$
+\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
+$$
 
-# Principales distribuciones de probabilidad
-## Distribuciones discretas
-## Distribución uniforme
-## Distribución binomial
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
 
-# Distribuciones de variables discretas. Distribución de Poisson.
-## Función de densidad de probabilidad
-## Función de distribución de probabilidad
-## Condiciones
+# Calcular la media
+mean(altura_estudiantes)
+
+# Calcular la media con valores NA
+mean(c(1.70, 1.65, 1.80, 1.75, 1.60, NA))
+
+# Calcular la media con valores NA y valores infinitos
+mean(c(1.70, 1.65, 1.80, 1.75, 1.60, NA, Inf))
+```
+
+### Mediana
+
+La mediana es el valor que separa la mitad superior de un conjunto de datos de la mitad inferior. Es menos sensible a los valores atípicos que la media, por lo que es una mejor medida de tendencia central cuando los datos tienen valores atípicos.
+
+$$
+\tilde{x} = \begin{cases}
+x_{\frac{n+1}{2}} & \text{si } n \text{ es impar} \\
+\frac{1}{2} \left( x_{\frac{n}{2}} + x_{\frac{n}{2} + 1} \right) & \text{si } n \text{ es par}
+\end{cases}
+$$
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Calcular la mediana
+median(altura_estudiantes)
+```
+
+### Moda
+
+La moda es el valor que ocurre con mayor frecuencia en un conjunto de datos. Es la única medida de tendencia central que se puede utilizar con datos categóricos. Sin embargo, no es una buena medida de tendencia central cuando los datos tienen múltiples valores que ocurren con la misma frecuencia.
+
+$$
+\text{Moda} = \underset{x}{\text{argmax}} \left( \text{Frecuencia Absoluta}(x) \right)
+$$
+
+```{r}
+# Crear un vector con datos categóricos
+colores_camisetas <- c("rojo", "azul", "verde", "rojo", "verde", "verde")
+
+# Calcular la moda
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+Mode(colores_camisetas)
+```
+
+## Medidas de dispersión
+
+Las medidas de dispersión son estadísticas que resumen la variabilidad de un conjunto de datos. Son especialmente útiles para describir la distribución de datos numéricos continuos o discretos. Las medidas de dispersión más comunes son el rango, la varianza y la desviación estándar.
+
+### Rango
+
+El rango es la diferencia entre el valor máximo y el valor mínimo de un conjunto de datos. Es la medida de dispersión más simple y fácil de calcular, pero también la menos informativa.
+
+$$
+\text{Rango} = \max(x) - \min(x)
+$$
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Calcular el rango
+max(altura_estudiantes) - min(altura_estudiantes)
+```
+
+### Varianza
+
+La varianza es la media de las diferencias al cuadrado entre cada valor y la media. Es una medida de dispersión muy común, pero no es muy intuitiva porque está en unidades al cuadrado.
+
+$$
+\sigma^2 = \frac{1}{n} \sum_{i=1}^{n} \left( x_i - \bar{x} \right)^2
+$$
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Calcular la varianza
+var(altura_estudiantes)
+```
+
+### Desviación estándar
+
+La desviación estándar es la raíz cuadrada de la varianza. Es una medida de dispersión muy común y más intuitiva que la varianza porque está en las mismas unidades que los datos.
+
+$$
+\sigma = \sqrt{\sigma^2} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} \left( x_i - \bar{x} \right)^2}
+$$
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Calcular la desviación estándar
+sd(altura_estudiantes)
+```
+
+## Visualización de datos
+
+La visualización de datos es una rama de la estadística que se centra en la visualización de datos. Su objetivo es resumir y organizar los datos para que sean más fáciles de entender y visualizar. Por tanto, la visualización de datos se puede utilizar para describir las características de un conjunto de datos, pero no para llegar a conclusiones más allá de los datos que tenemos o para realizar inferencias sobre una población.
+
+Para la visualización de datos en R podemos utilizar las bibliotecas nativas o bien alternativas de terceros. Una alternativa popular es la biblioteca `ggplot2`, que se basa en la gramática de gráficos de Wilkinson.
+
+### Visualización de datos cualitativos
+
+La visualización de datos cualitativos se utiliza para visualizar datos categóricos. Los gráficos más comunes para visualizar datos cualitativos son los gráficos de barras y los gráficos circulares.
+
+```{r}
+# Crear un vector con datos categóricos
+colores_camisetas <- c("rojo", "azul", "verde", "rojo", "verde", "verde")
+
+# Crear un gráfico de barras
+barplot(table(colores_camisetas))
+
+# Crear un gráfico circular
+pie(table(colores_camisetas))
+```
+Los mismos gráficos pero utilizando la biblioteca `ggplot2`:
+
+```{r}
+library(ggplot2)
+# Crear un vector con datos categóricos
+colores_camisetas <- c("rojo", "azul", "verde", "rojo", "verde", "verde")
+
+# Crear un gráfico de barras
+ggplot(data.frame(colores_camisetas), aes(x = colores_camisetas)) + geom_bar()
+
+# Crear un gráfico circular
+ggplot(data.frame(colores_camisetas), aes(x = "")) + geom_bar() + coord_polar(theta = "y")
+```
+
+### Visualización de datos cuantitativos
+
+La visualización de datos cuantitativos se utiliza para visualizar datos continuos o discretos. Los gráficos más comunes para visualizar datos cuantitativos son los histogramas y los diagramas de caja.
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Crear un histograma
+hist(altura_estudiantes)
+
+# Crear un diagrama de caja
+boxplot(altura_estudiantes)
+```
 
