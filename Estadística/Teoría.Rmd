@@ -5,7 +5,7 @@ date: "2024-01-08"
 output: 
   pdf_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 4
     number_sections: true
 header-includes:
 - \usepackage{fancyhdr}
@@ -207,6 +207,84 @@ colnames(tabla_frecuencias) <- c("Calificación", "Frecuencia Absoluta", "Frecue
 knitr::kable(tabla_frecuencias, caption = "Frecuencia Absoluta de Calificaciones")
 ```
 
+## Probabilidad condicionada
+
+La probabilidad condicionada describe cómo la probabilidad de un evento A cambia cuando se conoce que otro evento B ha ocurrido.
+
+### Definición formal
+
+La probabilidad condicionada de $A$ dado $B$ se denota como $P(A|B)$ y se define como:
+
+$$
+P(A|B) = \frac{P(A \cap B)}{P(B)}
+$$
+
+donde:
+
+* $P(A \cap B)$ es la probabilidad de que ocurran ambos eventos $A$ y $B$.
+* $P(B)$ es la probabilidad de que ocurra el evento $B$.
+
+### Carecterísticas
+
+* **Actualización de información**: la probabilidad condicionada actualiza nuestras creencias sobre la probabilidad de un evento cuando se conoce que otro evento ha ocurrido. Es una medida de cómo un evento influye en la probabilidad de otro evento.
+* **Rango**: Al igual que las probabilidades ordinarias, las probabilidades condicionadas están en el rango de 0 a 1.
+* **Dependencia e Independencia**:
+  * Si $P(A|B) = P(A)$, entonces los eventos $A$ y $B$ son independientes.
+  * Si dos eventos son independientes, entonces $P(A \cap B) = P(A) \cdot P(B)$.
+  * Si $P(A|B) \neq P(A)$, entonces los eventos $A$ y $B$ son dependientes.
+  
+### Propiedades
+
+* **Probabilidad Total**: Si se tiene un conjunto de eventos mutuamente excluyentes y colectivamente exhaustivos $B_1, B_2, \dots, B_n$, entonces la probabilidad de un evento $A$ se puede calcular como: $P(A) = \sum_{i=1}^{n} P(A|B_i) \cdot P(B_i)$.
+* **Teorema de Bayes**: Si se tiene un conjunto de eventos mutuamente excluyentes y colectivamente exhaustivos $B_1, B_2, \dots, B_n$, entonces la probabilidad de un evento $B_j$ dado un evento $A$ se puede calcular como: $P(B_j|A) = \frac{P(A|B_j) \cdot P(B_j)}{\sum_{i=1}^{n} P(A|B_i) \cdot P(B_i)}$.
+
+### Ejemplo
+
+Imaginemos que tenemos un mazo de cartas (52 cartas en total). Queremos calcular la probabilidad de sacar un as dado que ya sabemos que la carta es de corazones. En este caso, A es el evento "sacar un as" y B es "sacar una carta de corazones".
+
+* $P(A)$, hay 4 ases en el mazo, entonces: $P(A) = \frac{4}{52}$
+* $P(B)$, hay 13 cartas de corazones, entonces: $P(B) = \frac{13}{52}$
+* $P(A \cap B)$, solo hay 1 as de corazones, por lo que: $P(A \cap B) = \frac{1}{52}$
+
+Utilizando la fórmula de la probabilidad condicionada:
+
+$$
+P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{\frac{1}{52}}{\frac{13}{52}} = \frac{1}{13}
+$$
+
+Esto significa que la probabilidad de sacar un as, sabiendo que la carta es de corazones, es $\frac{1}{13}$.
+
+## Teorema de Bayes
+
+El Teorema de Bayes, nombrado así en honor al reverendo Thomas Bayes, es un principio fundamental en el campo de la probabilidad y la estadística. Este teorema proporciona una forma de actualizar nuestras probabilidades a priori sobre un evento, basándonos en nueva evidencia o información. Es especialmente útil en situaciones donde las probabilidades condicionales son conocidas o pueden ser estimadas.
+
+### Definición formal
+
+El Teorema de Bayes se expresa matemáticamente como:
+
+$$
+P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}
+$$
+
+donde:
+
+* $P(A|B)$ es la probabilidad posterior de A después de observar B.
+* $P(B|A)$ es la probabilidad de B dado A.
+* $P(A)$ es la probabilidad previa de A.
+* $P(B)$ es la probabilidad previa de B.
+
+### Ejemplos
+
+* **Diagnóstico Médico**: Como se mencionó anteriormente, el Teorema de Bayes es muy útil en medicina para interpretar los resultados de las pruebas. Por ejemplo, si una prueba para una enfermedad tiene cierta tasa de falsos positivos y falsos negativos, y conocemos la prevalencia de la enfermedad, el Teorema de Bayes puede ayudarnos a calcular la probabilidad de que un paciente realmente tenga la enfermedad dado un resultado positivo en la prueba.
+
+* **Filtro de Spam en el Email**: Los filtros de correo electrónico utilizan el Teorema de Bayes para clasificar los mensajes como "spam" o "no spam". El filtro analiza la probabilidad de que un mensaje sea spam basándose en la presencia de ciertas palabras. Si una palabra aparece más frecuentemente en los mensajes de spam que en los mensajes normales, aumenta la probabilidad de que el mensaje sea spam.
+
+* **Inferencia en Ciencia de Datos**: En machine learning y estadística, el Teorema de Bayes se usa para actualizar los modelos a medida que se recopilan nuevos datos. Por ejemplo, en un sistema de recomendación, las preferencias de los usuarios se actualizan constantemente a medida que interactúan con diferentes productos.
+
+* **Toma de Decisiones bajo Incertidumbre**: En finanzas y economía, el Teorema de Bayes se utiliza para actualizar las probabilidades de los resultados económicos basándose en nueva información, como cambios en las políticas económicas o indicadores del mercado.
+
+* **Ciencias Forenses**: En el análisis forense, el Teorema de Bayes puede ayudar a evaluar la evidencia. Por ejemplo, si se encuentra una huella dactilar en una escena del crimen, el teorema puede utilizarse para calcular la probabilidad de que pertenezca a un sospechoso, dados los patrones de huellas dactilares de la población en general.
+
 # Estadística Descriptiva
 
 La estadística descriptiva es una rama de la estadística que se centra en la descripción de los datos. Su objetivo es resumir y organizar los datos para que sean más fáciles de entender y visualizar. Por tanto, la estadística descriptiva se puede utilizar para describir las características de un conjunto de datos, pero no para llegar a conclusiones más allá de los datos que tenemos o para realizar inferencias sobre una población.
@@ -335,7 +413,7 @@ La visualización de datos es una rama de la estadística que se centra en la vi
 
 Para la visualización de datos en R podemos utilizar las bibliotecas nativas o bien alternativas de terceros. Una alternativa popular es la biblioteca `ggplot2`, que se basa en la gramática de gráficos de Wilkinson.
 
-### Visualización de datos cualitativos
+### Visualización de datos cualitativos (una variable)
 
 La visualización de datos cualitativos se utiliza para visualizar datos categóricos. Los gráficos más comunes para visualizar datos cualitativos son los gráficos de barras y los gráficos circulares.
 
@@ -363,6 +441,21 @@ ggplot(data.frame(colores_camisetas), aes(x = colores_camisetas)) + geom_bar()
 ggplot(data.frame(colores_camisetas), aes(x = "")) + geom_bar() + coord_polar(theta = "y")
 ```
 
+### Visualización de datos cualitativos (dos variables)
+
+Cuando dos variables se miden en una sola unidad experimental, los datos resultantes se denominan **datos bivariados**. La visualización de datos bivariados se utiliza para visualizar datos categóricos en dos variables. Los gráficos más comunes para visualizar datos bivariados son los gráficos de barras apiladas y los gráficos de barras agrupadas.
+
+```{r}
+# Crear un vector con datos categóricos
+colores_camisetas <- c("rojo", "azul", "verde", "rojo", "verde", "verde")
+
+# Crear un vector con datos categóricos
+tallas_camisetas <- c("S", "M", "L", "S", "M", "L")
+
+# Crear un gráfico de barras apiladas
+barplot(table(colores_camisetas, tallas_camisetas), legend = TRUE, col = c("red", "blue", "green"))
+```
+
 ### Visualización de datos cuantitativos
 
 La visualización de datos cuantitativos se utiliza para visualizar datos continuos o discretos. Los gráficos más comunes para visualizar datos cuantitativos son los histogramas y los diagramas de caja.
@@ -377,4 +470,64 @@ hist(altura_estudiantes)
 # Crear un diagrama de caja
 boxplot(altura_estudiantes)
 ```
+
+Los diagramas de cajas son una forma de visualizar la distribución de un conjunto de datos. Se basan en el rango intercuartil, que es la diferencia entre el tercer y el primer cuartil. El primer cuartil es el valor que divide el conjunto de datos en dos partes iguales, y el tercer cuartil es el valor que divide el conjunto de datos en dos partes iguales. El diagrama de caja muestra el rango intercuartil como una caja, con el primer cuartil en la parte inferior y el tercer cuartil en la parte superior. La mediana se muestra como una línea dentro de la caja. Los valores atípicos se muestran como puntos fuera de la caja.
+
+* Los lados inferior y superior de la caja representan el **primer** y el **tercer cuartil**. Por lo que la altura de la caja es igual al **rango intercuartil**. Así, la caja representa el 50% de los datos.
+* La línea central de la caja representa la **mediana**.
+* Los puntos fuera de la caja representan los **valores atípicos**. Estos son calculados de la siguiente manera:
+  * **Límite inferior**: $Q_1 - 1.5 \times \text{RI}$
+  * **Límite superior**: $Q_3 + 1.5 \times \text{RI}$
+
+### Visualización de datos cuantitativos (dos variables)
+
+La representación gráfica más usual es el **diagrama de dispersión**. Este diagrama representa los valores de dos variables en un plano cartesiano. Cada punto representa un par de valores de las dos variables. El diagrama de dispersión se utiliza para visualizar la relación entre dos variables.
+
+* **Correlación lineal**: cuando el diagrama muestra cierta **relación lineal** entre las variables, la medida resumen comúnmente utilizada es el **coeficiente de correlación de Pearson**. Este coeficiente toma valores entre -1 y 1. Un valor de 1 indica una correlación lineal positiva perfecta, un valor de -1 indica una correlación lineal negativa perfecta y un valor de 0 indica que no hay correlación lineal. Matemáticamente se expresa como: $r = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2} \sqrt{\sum_{i=1}^{n} (y_i - \bar{y})^2}}$
+  * Existe una correlación entre dos variables cuando los valores de una variable están de alguna manera asociados con los valores de la otra.
+  * La correlación mide la *fuerza* y la *dirección* de la relación entre dos variables.
+  
+Algunas propiedades de la correlación son:
+
+* El valor del coeficiente de correlación está entre -1 y 1. $-1 \leq r \leq 1$
+* Si $r = 0$, no hay correlación lineal.
+* Si $r > 0$, hay una correlación lineal positiva.
+* Si $r < 0$, hay una correlación lineal negativa.
+* La correlación $r$ no tiene unidades y no depende de la escala de las variables.
+* La correlación es simétrica. $r_{xy} = r_{yx}$
+
+```{r}
+# Crear un vector con datos continuos
+altura_estudiantes <- c(1.70, 1.65, 1.80, 1.75, 1.60)
+
+# Crear un vector con datos continuos
+peso_estudiantes <- c(70, 65, 80, 75, 60)
+
+# Crear un diagrama de dispersión
+plot(altura_estudiantes, peso_estudiantes)
+```
+
+Podemos calcular la correlación mediante la función `cor()`:
+
+```{r}
+cor(altura_estudiantes, peso_estudiantes)
+```
+
+Si en lugar de datos inventados utilizamos los datos del dataset del **titanic** obtenemos el siguiente gráfico:
+
+```{r}
+# Cargar el dataset del titanic
+titanic <- read.csv("datasets/titanic.csv")
+
+# Crear un diagrama de dispersión
+plot(titanic$Age, titanic$Fare)
+```
+Aquí el coeficiente de correlación es:
+
+```{r}
+cor(titanic$Age, titanic$Fare)
+```
+
+
+
 
