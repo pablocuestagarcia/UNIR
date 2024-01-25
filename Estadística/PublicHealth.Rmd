@@ -1,0 +1,187 @@
+---
+title: "Statistics"
+author: "Pablo de la Cuesta García"
+date: "2024-01-19"
+output: pdf_document
+---
+
+## Muestreo
+
+La medicina se basa en gran medida en estudios y experimentos realizados con muestras de personas. La selección de estas muestras es crítica porque los resultados del estudio se generalizarán a una población más amplia. La validez de estas generalizaciones depende en gran medida de cómo se seleccionaron estas muestras.
+
+### Criterios para la Selección de Muestras
+
+-   **Objetivo del Estudio:** La pregunta de investigación guía la selección de la muestra. Por ejemplo, si el objetivo es estudiar la calidad de la atención en migrañas, el tipo de clínica (comunitaria o hospitalaria) influirá en la muestra.
+-   **Consideraciones Logísticas:** Factores como costos, accesibilidad y características demográficas pueden influir en la elección de la muestra.
+
+### Implicaciones de la Selección de Muestras
+
+La forma en que se selecciona la muestra afecta la interpretación de los resultados. Por ejemplo, si se elige un grupo de edad específico, los resultados podrían no ser aplicables a otras edades.
+
+### Métodos de Muestreo
+
+-   **Muestreo Aleatorio Simple:** Cada individuo de la población tiene la misma probabilidad de ser seleccionado. Este método es útil cuando la población es homogénea.
+-   **Muestreo Aleatorio Estratificado:** La población se divide en estratos o subgrupos, y se seleccionan muestras de cada uno. Esto asegura la representación de subgrupos específicos (por ejemplo, diferentes edades o géneros).
+-   **Muestreo por Conglomerados:** Similar al estratificado, pero aquí los conglomerados suelen ser geográficos. Se seleccionan al azar conglomerados y luego se muestrea dentro de ellos.
+
+### Otros Métodos de Muestreo
+
+Existen métodos como el muestreo por conveniencia o voluntarios, pero estos pueden no ser representativos de la población objetivo.
+
+## Ejemplos
+
+### Muestreo aleatoria Simple
+
+```{r}
+library(ggplot2)
+
+# Suponiendo que cada individuo en la población tiene una edad asociada
+set.seed(123)
+poblacion_edades <- data.frame(
+  individuo = paste0('individuo', 1:1000),
+  edad = sample(18:80, 1000, replace = TRUE)
+)
+
+# Seleccionar una muestra aleatoria y sus edades correspondientes
+muestra_simple <- sample(poblacion_edades$individuo, 50)
+muestra_simple_edades <- poblacion_edades[poblacion_edades$individuo %in% muestra_simple, ]
+
+# Gráfico de barras para la muestra aleatoria simple
+ggplot(muestra_simple_edades, aes(x = edad)) +
+  geom_histogram(bins = 10) +
+  theme_minimal() +
+  labs(title = "Distribución de Edad en la Muestra Aleatoria Simple",
+       x = "Edad",
+       y = "Frecuencia")
+
+```
+
+### Muestreo Aleatorio Estratificado
+
+```{r}
+# Instalar y cargar dplyr si aún no está instalado
+if (!require(dplyr)) install.packages("dplyr")
+library(dplyr)
+
+# Crear un data frame con datos de la población
+set.seed(123)
+data <- data.frame(
+  individuo = paste0('individuo', 1:1000),
+  edad = sample(18:80, 1000, replace = TRUE)  # Edades aleatorias entre 18 y 80
+)
+
+# Dividir la población en estratos por edad
+data$estrato <- cut(data$edad, breaks = c(17, 30, 50, 80), labels = c('18-30', '31-50', '51-80'))
+
+# Tamaño de muestra por estrato
+tamanio_muestra_estrato <- 10
+
+# Muestreo estratificado
+muestra_estratificada <- data %>%
+  group_by(estrato) %>%
+  sample_n(min(n(), tamanio_muestra_estrato))
+
+# Ver la muestra estratificada
+muestra_estratificada
+
+```
+
+```{r}
+# Instalar y cargar ggplot2 si aún no está instalado
+if (!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Gráfico de barras para la distribución de edad
+ggplot(muestra_estratificada, aes(x = edad)) +
+  geom_histogram(bins = 10) +
+  theme_minimal() +
+  labs(title = "Distribución de Edad en la Muestra Estratificada",
+       x = "Edad",
+       y = "Frecuencia")
+
+```
+
+### Muestreo por Conglomerados
+
+```{r}
+# Crear un data frame para representar la población dividida en conglomerados
+set.seed(123)
+data_conglomerados <- data.frame(
+  individuo = paste0('individuo', 1:1000),
+  ubicacion = sample(c('Zona A', 'Zona B', 'Zona C', 'Zona D'), 1000, replace = TRUE),
+  edad      = sample(18:80, 1000, replace = TRUE)
+)
+
+# Elegir un número de conglomerados al azar
+num_conglomerados_seleccionados <- 2
+conglomerados_seleccionados <- sample(unique(data_conglomerados$ubicacion), num_conglomerados_seleccionados)
+
+# Seleccionar individuos de los conglomerados elegidos
+muestra_conglomerados <- data_conglomerados[data_conglomerados$ubicacion %in% conglomerados_seleccionados, ]
+
+# Ver la muestra por conglomerados
+muestra_conglomerados
+```
+
+```{r}
+# Gráfico de barras para la muestra por conglomerados
+ggplot(muestra_conglomerados, aes(x = ubicacion)) +
+  geom_bar() +
+  theme_minimal() +
+  labs(title = "Distribución de Ubicaciones en la Muestra por Conglomerados",
+       x = "Ubicación",
+       y = "Frecuencia")
+```
+
+
+
+
+
+
+
+
+```{r}
+# Configuración
+set.seed(0)  # Para reproducibilidad
+n_muestras <- 100
+tamaño_muestra <- 50
+media_poblacional <- 155
+desviacion_estandar <- 20
+
+# Generar muestras aleatorias
+muestras <- matrix(rnorm(n_muestras * tamaño_muestra, mean = media_poblacional, sd = desviacion_estandar), nrow = n_muestras)
+
+# Calcular intervalos de confianza del 95%
+ic_inferior <- numeric(n_muestras)
+ic_superior <- numeric(n_muestras)
+
+for (i in 1:n_muestras) {
+  muestra <- muestras[i, ]
+  media_muestra <- mean(muestra)
+  se_muestra <- sd(muestra) / sqrt(tamaño_muestra)
+  margen_error <- 1.96 * se_muestra
+  ic_inferior[i] <- media_muestra - margen_error
+  ic_superior[i] <- media_muestra + margen_error
+}
+
+# Contar cuántos intervalos contienen la media poblacional
+ic_contienen_media <- ic_inferior <= media_poblacional & ic_superior >= media_poblacional
+conteo_contienen_media <- sum(ic_contienen_media)
+
+# Gráfico de los intervalos de confianza
+plot(1:n_muestras, ic_superior, type = "n", xlab = "Número de Muestra", ylab = "Gasto en Comida ($)", main = "Intervalos de Confianza del 95% para el Gasto Promedio en Comida por Familia")
+for (i in 1:n_muestras) {
+  segments(x0 = i, y0 = ic_inferior[i], y1 = ic_superior[i], col = "blue")
+  if (ic_contienen_media[i]) {
+    points(i, media_poblacional, col = "green", pch = 16)
+  } else {
+    points(i, media_poblacional, col = "red", pch = 4)
+  }
+}
+abline(h = media_poblacional, col = "black", lty = 2)
+legend("topright", legend = c("Media Poblacional Real (155)"), lty = 2, col = "black")
+
+# Resultado
+print(conteo_contienen_media)
+
+```

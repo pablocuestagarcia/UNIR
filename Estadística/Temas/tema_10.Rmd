@@ -1,0 +1,25 @@
+---
+title: "Tema 10. Relación entre variables"
+author: "Pablo de la Cuesta García"
+date: "2024-01-25"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Notas
+
+## Probabilidad multivariable. Medidas de relación entre variables
+
+* Probabilidad vectorial
+  * Correlación: Pearson.
+  * Regresión lineal: $y = \hat{y} + \frac{sigma_xy}{}
+  
+Vectores aleatorios: Analizar las relaciones que se dan entre las variables del vector.
+funciones masa de probabilidad conjunta o densidad de probabilidad, nos permiten calcular el valor esperado de una funcion.
+
+Matriz de varianzas y covarianzas
+Matriz de correlaciones
+Muestra aleatoria multivariada

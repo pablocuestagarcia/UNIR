@@ -1,0 +1,53 @@
+---
+title: "Ejercicios EStadística"
+author: "Pablo de la Cuesta García"
+date: "2024-01-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1. Lina ha recopilado información sobre el número de estudiantes que acuden en bicicleta a la universidad cada día a lo largo de un año. A continuación se muestra un extracto de sus datos:
+
+| Día | Número de estudiantes |
+|-----|-----------------------|
+| 1   | 299                    |
+| 2   | 345                    |
+| 3   | 320                    |
+| ...   | ...                    |
+| 364   | 290                    |
+| 365   | 318                    |
+
+a) ¿Qué tipo de datos tiene Lina?
+
+2. ¿Cuál de los siguientes no puede describirse razonablemente como datos discretos:
+
+- [ ] Número de visitas a su médico en los últimos 6 meses   
+- [x] Gravedad de la enfermedad, por ejemplo, leve, moderada o grave
+- [ ] Estado de recaída del cáncer    
+- [ ] Mililitros de sangre transfundidos en una operación   
+
+
+
+The formula for binomial coefficients is $\dbinom{n}{k}=\dfrac{n!}{k!(n-k)!}$, where $n!$ denotes the factorial of $n$.
+
+So, we have $\dbinom{14}{11}=\dfrac{14!}{11!(14-11)!}=\dfrac{14!}{11!3!}$.
+
+We can simplify this expression by canceling out common factors:
+$\dfrac{14!}{11!3!}=\dfrac{14\times 13\times 12\times 11!}{11!\times 3\times 2\times 1}=\dfrac{14\times 13\times 12}{3\times 2\times 1}=\boxed{364}$.
+
+The answer is: 364
+
+## Normal distribution
+
+A normal distribution is a type of probability distribution that has a bell-shaped curve. It is the most common form of probability distribution used in mathematics, statistics, and engineering.
+
+The formula for the sum of a geometric series is $\dfrac{a(1-r^n)}{1-r}$, where $a$ is the first term, $r$ is the common ratio, and $n$ is the number of terms.
+
+In this case, we have $a=1$, $r=0.5$, and $n=6$. Plugging these values into the formula, we get:
+$\dfrac{1(1-0.5^6)}{1-0.5}=\dfrac{1(1-0.3921541)}{0.5}=\boxed{40}$.
+
+So, the value of x is 40.The answer is: 40

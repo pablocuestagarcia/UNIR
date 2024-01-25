@@ -1,0 +1,375 @@
+---
+title: "Actividad 3"
+output:
+  pdf_document: default
+  html_notebook: default
+  word_document: default
+---
+
+
+# Parte 1: Análisis Exploratorio de Datos
+
+## Tarea 1
+
+### Ejercicio 1
+
+Filtra el conjunto de datos para conservar solamente los precios de ventas al público en general en las provincias mencionadas de los carburantes de interés. Notar que tenemos dos condiciones que cumplir:
+- Provincia: Madrid, Barcelona, Valencia y Sevilla.
+- Tipo de venta: P (venta al público en general).
+para las variables `Precio de gasolina 95 E5` y `Precio de gasóleo A`.
+
+#### Respuesta
+
+Vamos a leer el archivo proporcionado por UNIR. Este viene en formato `.xlsx`, por lo que utilizaremos la función `read_excel()` del paquete `readxl` para leerlo. Esta es la opción recomendada por RStudio para leer archivos de Excel. Posteriormente crearemos un nuevo dataset con las columnas de interés así como las filas que cumplan las condiciones indicadas.
+
+```{r}
+library(readxl)
+library(dplyr)
+
+dataset_0 <- read_excel("dataset.xlsx")
+dataset <- dataset_0 |>
+  filter(Provincia %in% c("MADRID", "BARCELONA", "VALENCIA / VALÈNCIA", "SEVILLA") & `Tipo venta` == "P") |>
+  select(Provincia, `Tipo venta`, `Precio gasolina 95 E5`, `Precio gasóleo A`)
+
+head(dataset)
+```
+
+### Ejercicio 2
+
+Realiza un análisis exploratorio del precio del carburante gasolina 95 E5 por provincia. Este análisis deberá contener resúmenes numéricos y gráficos adecuados al tipo de variable con la que estás trabajando. Puede ser conveniente que, en primer lugar, definas claramente la/s variable/s con la/s que vas a trabajar en este punto.
+
+#### Respuesta
+
+Como primer paso vamos a comprobar que tipo de datos son las columnas seleccionadas. Para ello, utilizamos la función `str()`, la cual nos devuelve el tipo de dato de cad columna así como los primeros valores de la misma.
+
+```{r}
+# Comprobamos que tipos de datos tenemos en nuestro dataset
+str(dataset)
+```
+
+Todas las columnas son de tipo `character`, por lo que vamos a convertir las columnas de precios a tipo `numeric` para poder realizar operaciones con ellas. Igualmente tenemos valores `NA` en las columnas de precios, por lo que vamos a eliminarlos. Otra observación es que los precios de las columnas contienen comas para separar los decimales, por lo que vamos a sustituirlos por puntos.
+
+```{r}
+# Eliminamos los NA
+dataset <- dataset |>
+  filter(!is.na(`Precio gasolina 95 E5`) & !is.na(`Precio gasóleo A`))
+
+# Susitituimos las comas por puntos
+dataset$`Precio gasolina 95 E5` <- gsub(",", ".", dataset$`Precio gasolina 95 E5`)
+dataset$`Precio gasóleo A` <- gsub(",", ".", dataset$`Precio gasóleo A`)
+
+# Convertimos las columnas de precios a tipo numeric
+dataset$Precio_gasolina_95_E5 <- as.numeric(dataset$`Precio gasolina 95 E5`, na.rm = TRUE)
+dataset$Precio_gasoleo_A <- as.numeric(dataset$`Precio gasóleo A`, na.rm = TRUE)
+
+# Volvemos a comprobar los tipos de datos
+str(dataset)
+```
+
+Vemos que se han creado dos nuevas columnas las cuales contienen los precios en el formato correcto.
+
+Ahora podemos proceder a realizar un análisis exploratorio de las variables de interés. Para ello, vamos a utilizar la función `summary()` para obtener un resumen de las variables numéricas.
+
+```{r}
+library(dplyr)
+
+# Precio Gasolina por Provincia
+dataset_gasolina <- dataset |>
+  filter(`Tipo venta` == "P") |>
+  select(Provincia, Precio_gasolina_95_E5, Precio_gasoleo_A)
+
+# Precio Medio Por Provincia
+precio_medio_gasolina <- dataset_gasolina |>
+  group_by(Provincia) |>
+  summarise(
+    Media = mean(Precio_gasolina_95_E5, na.rm = TRUE),
+    Mediana = median(Precio_gasolina_95_E5, na.rm = TRUE),
+    Minimo = min(Precio_gasolina_95_E5, na.rm = TRUE),
+    Maximo = max(Precio_gasolina_95_E5, na.rm = TRUE),
+    SD = sd(Precio_gasolina_95_E5, na.rm = TRUE),
+    Varianza = var(Precio_gasolina_95_E5, na.rm = TRUE)
+  )
+print(precio_medio_gasolina)
+```
+
+Visualizamos los resultados en un gráfico de barras.
+
+```{r}
+library(ggplot2)
+
+# Gráfico de barras
+ggplot(precio_medio_gasolina, aes(x = Provincia, y = Media)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Precio Medio de la Gasolina 95 E5 por Provincia",
+       x = "Provincia",
+       y = "Precio Medio")
+```
+Resumen de percentiles de la variable `Precio_gasolina_95_E5` por provincia y rango intercuartílico.
+
+```{r}
+# Resumen de percentiles
+percentiles_dataset_gasolina <- dataset_gasolina |>
+  group_by(Provincia) |>
+  summarise(
+    Percentil_25 = quantile(Precio_gasolina_95_E5, 0.25, na.rm = TRUE),
+    Percentil_75 = quantile(Precio_gasolina_95_E5, 0.75, na.rm = TRUE),
+    Rango_intercuartilico = IQR(Precio_gasolina_95_E5, na.rm = TRUE)
+  )
+print(percentiles_dataset_gasolina)
+```
+
+Gráfico de cajas y bigotes.
+
+```{r}
+# Gráfico de cajas y bigotes
+ggplot(dataset_gasolina, aes(x = Provincia, y = Precio_gasolina_95_E5)) +
+  geom_boxplot(fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Precio de la Gasolina 95 E5 por Provincia",
+       x = "Provincia",
+       y = "Precio")
+```
+
+
+### Ejercicio 3
+
+A partir de los gráficos y resúmenes numéricos realizados en el punto anterior, ¿qué puedes concluir sobre el precio medio de los carburantes en cada una de las cuatro provincias analizadas? ¿Dirías que la variabilidad del precio es similar en las distintas provincias?
+
+#### Respuesta
+
+Los precios de la gasolina entre provincias son muy similares. La variabilidad de los precios es similar en todas las provincias, aún así podemos observar que los precios en la provincia de Barcelona y Valencia, son ligeramente más variables que en el resto de provincias. Esto es debido a que en el gráfico de cajas y bigotes el rango intercuartílico es mayor en Barcelona y Valencia que en el resto de provincias.
+
+### Ejercicio 4
+
+Repite los puntos 2. y 3. pero considerando ahora los precios del gasóleo A.
+
+#### Respuesta
+
+Previamente ya convertimos la columna de precios relacioanda con el gasóleo A a tipo `numeric`, por lo que podemos proceder a realizar el análisis exploratorio de la misma.
+
+```{r}
+# Precio Medio Por Provincia
+precio_medio_gasoleo <- dataset_gasolina |>
+  group_by(Provincia) |>
+  summarise(
+    Media = mean(Precio_gasoleo_A, na.rm = TRUE),
+    Mediana = median(Precio_gasoleo_A, na.rm = TRUE),
+    Minimo = min(Precio_gasoleo_A, na.rm = TRUE),
+    Maximo = max(Precio_gasoleo_A, na.rm = TRUE),
+    SD = sd(Precio_gasoleo_A, na.rm = TRUE),
+    Varianza = var(Precio_gasoleo_A, na.rm = TRUE)
+  )
+print(precio_medio_gasoleo)
+```
+
+Visualizamos los resultados en un gráfico de barras.
+
+```{r}
+library(ggplot2)
+
+# Gráfico de barras
+ggplot(precio_medio_gasoleo, aes(x = Provincia, y = Media)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Precio Medio del Gasóleo por Provincia",
+       x = "Provincia",
+       y = "Precio Medio")
+```
+
+Resumen de percentiles de la variable `Precio_gasoleo_A` por provincia y rango intercuartílico.
+
+```{r}
+# Resumen de percentiles
+percentiles_dataset_gasoleo <- dataset_gasolina |>
+  group_by(Provincia) |>
+  summarise(
+    Percentil_25 = quantile(Precio_gasoleo_A, 0.25, na.rm = TRUE),
+    Percentil_75 = quantile(Precio_gasoleo_A, 0.75, na.rm = TRUE),
+    Rango_intercuartilico = IQR(Precio_gasoleo_A, na.rm = TRUE)
+  )
+print(percentiles_dataset_gasoleo)
+```
+
+Gráfico de cajas y bigotes.
+
+```{r}
+# Gráfico de cajas y bigotes
+ggplot(dataset_gasolina, aes(x = Provincia, y = Precio_gasoleo_A)) +
+  geom_boxplot(fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Precio del Gasóleo por Provincia",
+       x = "Provincia",
+       y = "Precio")
+```
+
+Los precios del gasóleo repite un patrón similar al de la gasolina. Los precios entre provincias son muy similares. Igualmente, la variabilidad de los precios es similar en todas las provincias, pero podemos observar que los precios en la provincia de Sevilla son ligeramente más variables que en el resto de provincias. Por lo que para el gasóleo A, la provincia de Sevilla es la que presenta una mayor variabilidad de precios.
+
+#### 5.	Exploratoriamente, ¿dirías que los precios de estos dos carburantes son diferentes?
+
+Los precios de los dos carburantes son muy similares. La variabilidad de los precios es también muy similar entre provincias. Por lo que podemos concluir que los precios de los dos carburantes no difieren mucho entre provincias
+
+
+# Parte 2: Inferencia
+
+En este apartado queremos estudiar si existen diferencias en el precio medio de cada uno de los carburantes según la provincia y también si el precio medio es diferente según el tipo de carburante.
+
+El procedimiento para contrastar diferencias entre dos medias que veremos aquí requiere la suposición de normalidad de los promedios, y además es necesario determinar si las varianzas de las dos poblaciones deben considerarse iguales o no. Esto último, porque el estadístico que se utiliza para llevar a cabo el contraste (y también para obtener los intervalos de confianza) es distinto según sea la suposición de igualdad o no de las varianzas de ambas poblaciones.
+
+Para esto último, podemos llevar a cabo un contraste sobre las varianzas poblacionales. En R podemos utilizar la función `var.test()` para realizar dicho contraste.
+
+Una vez realizado el test sobre las varianzas, podemos utilizar la función `t.test()` para contrastar las medias.
+
+## Tarea 2
+
+En esta segunda parte, queremos contrastar distintas hipótesis sobre los precios de los carburantes en relación con la provincia considerada.
+
+### Pregunta 6
+
+Comencemos estudiando si hay diferencias de precios entre la provincia de Madrid y las demás. Para ello, considera las hipótesis:
+
+* $H_0: \mu_1 - \mu_2 = 0$
+* $H_2: \mu_1 - \mu_2 \neq 0$
+
+Donde $\mu_1$ es el precio medio de la gasolina 95 E5 en la provincia de Madrid y $\mu_2$ es el precio medio de la gasolina 95 E5 en las demás provincias (Sevilla, Valencia y Barcelona).
+
+Utilizando el nivel de significación $\alpha = 0.01$, ¿tenemos evidencia suficiente de que el precio es diferente en Madrid respecto de las demás provincias consideradas? Si la respuesta es afirmativa, ¿dónde el precio es mayor?
+
+Ten en cuenta que, al realizar el análisis deberás considerar si las varianzas de las poblaciones debemos suponerlas iguales o no.
+
+#### Respuesta
+
+Para realizar el contraste de hipótesis, vamos a utilizar la función `var.test()` para contrastar las varianzas de las poblaciones. Posteriormente, utilizaremos la función `t.test()` para contrastar las medias.
+
+```{r}
+# Contraste de varianzas
+madrid <- subset(dataset_gasolina, Provincia == "MADRID")
+otras_provincias <- subset(dataset_gasolina, Provincia != "MADRID")
+var.test(
+  madrid$Precio_gasolina_95_E5, otras_provincias$Precio_gasolina_95_E5,
+  alternative = "two.sided",
+  conf.level = 0.95)
+```
+
+De estos resultados podemos observar que el **p-valor** es extremadamente pequeño. Este valor tan pequeño nos indica que las varianzas de las poblaciones son diferentes. Por lo que debemos utilizar el parámetro `var.equal = FALSE` en la función `t.test()`.
+
+```{r}
+# Contraste de medias
+t.test(
+  madrid$Precio_gasolina_95_E5, otras_provincias$Precio_gasolina_95_E5,
+  alternative = "two.sided",
+  conf.level = 0.95,
+  var.equal = FALSE)
+
+```
+
+El **p-valor** obtenido es muy bajo y nuestro nivel de significación es $\alpha = 0.01$. Por lo que podemos rechazar la hipótesis nula y aceptar la hipótesis alternativa. Por lo que podemos concluir que el precio de la gasolina 95 E5 en Madrid es diferente al precio de la gasolina 95 E5 en el resto de provincias.
+
+### Ejercicio 7
+
+Repite en análisis realizado en 7, pero considerando el precio del gasóleo A.
+
+#### Respuesta
+
+Para realizar el contraste de hipótesis, vamos a utilizar la función `var.test()` para contrastar las varianzas de las poblaciones. Posteriormente, utilizaremos la función `t.test()` para contrastar las medias.
+
+```{r}
+# Contraste de varianzas
+var.test(
+  madrid$Precio_gasoleo_A, otras_provincias$Precio_gasoleo_A,
+  alternative = "two.sided",
+  conf.level = 0.95)
+```
+
+El **p-valor** obtenido para el gasóleo es $0.8357$ por lo que no podemos concluir que las varianzas entre provincias para el gasóleo sean diferentes. Por tanto, debemos utilizar el parámetro `var.equal = TRUE` en la función `t.test()`.
+
+```{r}
+# Contraste de medias
+t.test(
+  madrid$Precio_gasoleo_A, otras_provincias$Precio_gasoleo_A,
+  alternative = "two.sided",
+  conf.level = 0.95,
+  var.equal = TRUE)
+```
+
+El **p-valor** obtenido es $5.374e-11$, y nuestro nivel de significación es $\alpha = 0.01$. Por lo que podemos rechazar la hipótesis nula y aceptar la hipótesis alternativa. Por lo que podemos concluir que el precio del gasóleo A en Madrid es diferente al precio del gasóleo A en el resto de provincias.
+
+### Ejercicio 8
+
+Finalmente realiza un contaste de hipótesis que te permita decidir si el precio medio de la gasolina 95 E5 es significativamente mayor que el del gasóleo A, diferenciando el análisis según las 4 provincias bajo estudio.
+
+#### Respuesta
+
+Hipótesis nula: $\mu_1 - \mu_2 = 0$
+Hipótesis alternativa: $\mu_1 - \mu_2 > 0$
+
+Para realizar el contraste de hipótesis, vamos a utilizar la función `var.test()` para contrastar las varianzas de las poblaciones. Posteriormente, utilizaremos la función `t.test()` para contrastar las medias.
+
+```{r}
+# Obtención de subconjuntos por provincias
+madrid <- subset(dataset_gasolina, Provincia == "MADRID")
+barcelona <- subset(dataset_gasolina, Provincia == "BARCELONA")
+valencia <- subset(dataset_gasolina, Provincia == "VALENCIA / VALÈNCIA")
+sevilla <- subset(dataset_gasolina, Provincia == "SEVILLA")
+```
+
+```{r}
+# Contraste de varianzas
+var.test(madrid$Precio_gasolina_95_E5, madrid$Precio_gasoleo_A, alternative = "greater", conf.level = 0.95)
+var.test(barcelona$Precio_gasolina_95_E5, barcelona$Precio_gasoleo_A, alternative = "greater", conf.level = 0.95)
+var.test(valencia$Precio_gasolina_95_E5, valencia$Precio_gasoleo_A, alternative = "greater", conf.level = 0.95)
+var.test(sevilla$Precio_gasolina_95_E5, sevilla$Precio_gasoleo_A, alternative = "greater", conf.level = 0.95)
+```
+
+| Provincia | p-valor | Varianzas |
+|-----------|---------|-----------|
+| Madrid    | 1       | Igual |
+| Barcelona | 0.1037  | Igual |
+| Valencia  | 0.3603  | Igual |
+| Sevilla   | 1       | Igual |
+
+Procedemos con el contraste de medias para cada provincia.
+
+```{r}
+# Contraste de medias
+t.test(madrid$Precio_gasolina_95_E5, madrid$Precio_gasoleo_A, var.equal = TRUE, alternative = "greater", conf.level = 0.90)
+t.test(barcelona$Precio_gasolina_95_E5, barcelona$Precio_gasoleo_A, var.equal = TRUE, alternative = "greater", conf.level = 0.90)
+t.test(valencia$Precio_gasolina_95_E5, valencia$Precio_gasoleo_A, var.equal = TRUE, alternative = "greater", conf.level = 0.90)
+t.test(sevilla$Precio_gasolina_95_E5, sevilla$Precio_gasoleo_A, var.equal = TRUE, alternative = "greater", conf.level = 0.90)
+```
+
+Resultados:
+
+| Provincia | p-valor | Hipótesis |
+|-----------|---------|-----------|
+| Madrid    | 2.2e-16   | Rechazamos $H_0$ |
+| Barcelona | 2.2e-16   | Rechazamos $H_0$ |
+| Valencia  | 2.2e-16   | Rechazamos $H_0$ |
+| Sevilla   | 1.31e-10  | Rechazamos $H_0$ |
+
+Debido a los resultados obtenidos al obtener los p-valores, podemos concluir que el precio medio de la gasolina 95 E5 es significativamente mayor que el del gasóleo A en todas las provincias.
+
+
+# Parte 3: Conclusiones
+
+A partir de la información obtenida del análisis realizado en los puntos anteriores, extrae conclusiones sobre el precio de los carburantes en las distintas provincias españolas.
+
+## Respuesta
+
+Los precios de los carburantes en las distintas provincias españolas son muy similares. La variabilidad de los precios es también muy similar entre provincias. Por lo que podemos concluir que los precios de los carburantes no difieren mucho entre provincias.
+
+La variabilidad de los precios de la gasolina 95 E5 es similar en todas las provincias, aún así podemos observar que los precios en la provincia de Barcelona y Valencia, son ligeramente más variables que en el resto de provincias. Esto es debido a que en el gráfico de cajas y bigotes el rango intercuartílico es mayor en Barcelona y Valencia que en el resto de provincias.
+
+Igualmente existen diferencias entre los tipos de carburantes en las distintas provincias. Los precios de la gasolina 95 E5 son significativamente mayores que los del gasóleo A en todas las provincias.
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,164 @@
+---
+title: "Tests"
+author: "Pablo de la Cuesta García"
+date: "2024-01-21"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Este enunciado es común para las cuestiones 1-5. Una fábrica produce tubos en línea, de longitud aproximada 1 metro y diámetro exterior aproximado 20 mm. Se cuenta con la siguiente tabla en la que se representan unos sucesos estadísticos de acuerdo con los resultados de producción indicados:
+
+![](img/enunciado_1.jpg)
+
+Por ejemplo, cuando sale de la línea de producción un tubo de 1.01 metros de longitud y un diámetro exterior de 20.3mm, el tubo se clasifica como C~2~.
+
+¿Cuál de los siguientes representa el espacio muestral?
+
+El espacio muestral se representa de la siguiente forma:
+
+$$
+A_1 \cup A_2 \cup A_3 \cup B_1 \cup B_2 \cup B_3 \cup C_1 \cup C_2 \cup C_3
+$$
+
+¿Cuál es el suceso complementario de $A_1$?
+
+Ninguna de las opciones mostradas.
+
+Pregunta 3: ¿Cuál es el suceso $A_2 \cap A_3$?
+
+El suceso $A_2 \cap A_3$ es aquel que incluye los elementos con un diámetro menor que $19.9$ y cuya longitudad está a la vez en el intervalo $0.99 \leq L < 1.01$
+
+# Test 4
+
+## Ejercicio 1: Funciones de Densidad
+
+Para analizar y explicar los conceptos estadísticos involucrados en la identificación de una función de densidad de probabilidad, primero definamos lo que es una función de densidad y las condiciones que debe cumplir.
+
+### Identificación de una función de densidad
+
+Una función de densidad de probabilidad (FDP) es una función que describe la probabilidad relativa de una variable aleatoria continua de tomar un valor específico. 
+
+La FDP cumple las siguientes características:
+
+* **No negatividad:** $f(x) \geq 0$ para todo $x$. Esto significa que la función de densiad no puede tomar valores negativos, ya que no tendría sentido hablar de probabilidades negativas.
+* **Normalización:** $\int_{-\infty}^{\infty} f(x) dx = 1$. Esto significa que la probabilidad total de que la variable aleatoria tome cualquier valor es igual a 1.
+
+```{r}
+# Cargando el paquete
+library(ggplot2)
+
+# Creando una secuencia de valores
+x <- seq(-4, 4, length = 100)
+
+# Calculando la densidad de la distribución normal para estos valores
+y <- dnorm(x)
+
+# Creando el gráfico
+ggplot(data.frame(x, y), aes(x, y)) + 
+  geom_line() + 
+  ggtitle("Distribución Normal Estándar") +
+  xlab("x") + 
+  ylab("f(x)")
+```
+
+### Ejercicio 1
+
+Ejercicio donde se determine el valor de un parámetro necesario para que una función dada sea una función de densidad de probabilidad en un intervalo específico.
+
+Consideremos la siguiente función con un parámetro $a$:
+
+$$
+f(x) = a \cdot x^2, \quad 0 \leq x \leq 1
+$$
+Supongamos que queremos que $f(x)$ sea una FDP en el intervalo definido. ¿Cuál debe ser el valor de $a$?
+
+Para que $f(x)$ sea una FDP, debe cumplir las siguientes condiciones:
+
+* $f(x) \geq 0$ para todo $x$ en el intervalo. Esto significa que $a \cdot x^2 \geq 0$ para todo $x$ en el intervalo. Como $x^2 \geq 0$ para todo $x$, entonces $a \geq 0$.
+* $\int_{-\infty}^{\infty} f(x) dx = 1$. Esto significa que $\int_{0}^{1} a \cdot x^2 dx = 1$. Resolviendo la integral, obtenemos $\dfrac{a}{3} = 1$, por lo que $a = 3$.
+
+Verificamos con R:
+
+```{r}
+# Definición de la función con a = 3
+f <- function(x) { 3 * x^2 }
+
+# Calculando la integral de la función en el intervalo [0, 1]
+integrate(f, 0, 1)
+```
+
+## Ejercicio 2: Relación entre FDP y FDA
+
+La FDA se puede obtener integrando la FDP desde $-\infty$ hasta $x$. Por lo que nos proporciona la probabilidad de que la variable aleatoria sea menor o igual que $x$.
+
+$$
+F(x) = \int_{-\infty}^{x} f(t) dt
+$$
+
+### Ejercicio 2
+
+Dada la siguiente función de densidad por intervalos:
+
+$$
+f(x) = \begin{cases}
+x, & 0 \leq x < 1 \\
+0.25, & 1 \leq x \leq 3 \\
+0, & \text{en otro caso}
+\end{cases}
+$$
+
+Calcula la FDA de la variable aleatoria $X$.
+
+Dado que la FDP, $f(x)$, es una función por intervalos, debemos calcular la FDA por intervalos. Primero, calculemos la FDA para $x < 1$:
+
+$$
+F(x) = \int_{-\infty}^{x} f(t) dt = \int_{0}^{x} t dt = \dfrac{x^2}{2}
+$$
+Cuando $1 \leq x \leq 3$, la FDA es:
+
+$$
+F(x) = \int_{-\infty}^{x} f(t) dt = \int_{0}^{1} t dt + \int_{1}^{x} 0.25 dt = \dfrac{1}{2} + \dfrac{x-1}{4} = \frac{1}{4}(x + 1)
+$$
+
+Finalmente, cuando $x > 3$, la FDA es:
+
+$$
+F(x) = \int_{-\infty}^{x} f(t) dt = \int_{0}^{1} t dt + \int_{1}^{3} 0.25 dt + \int_{3}^{x} 0 dt = \dfrac{1}{2} + \dfrac{1}{4} + 0 = \dfrac{3}{4}
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,13 +2,16 @@
 title: "Estadística"
 author: "Pablo de la Cuesta García"
 date: "2024-01-08"
-output: 
+output:
   pdf_document:
     toc: true
     toc_depth: 4
     number_sections: true
-header-includes:
-- \usepackage{fancyhdr}
+  html_document:
+    toc: true
+    toc_depth: '4'
+    df_print: paged
+header-includes: \usepackage{fancyhdr}
 ---
 
 ```{r setup, include=FALSE}
@@ -105,57 +108,41 @@ Usando la ley de la suma: $P(A \cup B) = P(A) + P(B) - P(A \cap B) = 3/4 + 3/4 -
 
 ## Tipos de datos
 
-### Datos Cualitativos
+![](/home/ubuntu/Repos/UNIR/Estadística/assets/tipos_variables.PNG)
 
-Los datos cualitativos o categóricos describen cualidades o características. No se expresan en números y por lo general se clasifica en categorías. Por ejemplo, el color de los ojos, el género, el estado civil, etc.
+Hay varias formas de clasificar los datos. Podemos establecer dos grandes grupos. Los datos cualitativos y los datos cuantitativos. O también podemos dividirlos en discretos y continuos. El diagrama anterior hace hincapié en esta última clasificación, siendo los datos categóricos los datos cualitativos.
 
-Dentro de los datos cualitativos, podemos distinguir entre:
+### Datos Discretos
 
-* **Nominales**. No existe un orden entre las categorías. Por ejemplo, el color de los ojos.
-* **Ordinales**. Existe un orden entre las categorías. Por ejemplo, el nivel de satisfacción de un cliente.
+Los datos discretos describen cantidades que se pueden contar. Se expresan en números enteros y no se pueden dividir en partes más pequeñas. Por ejemplo, el número de estudiantes en una clase, el número de caras al lanzar una moneda, etc.
 
-Este código crea un vector con colores de camisetas, un ejemplo típico de datos nominales donde cada color es una categoría sin un orden inherente.
+Los datos discretos se subdividen en dos tipos:
+
+* **Categóricos**. Los datos categóricos describen cualidades o características. No se expresan en números y por lo general se clasifica en categorías. Por ejemplo, el color de los ojos, el género, el estado civil, etc.
+  * **Ordinales**. Existe un orden entre las categorías. Por ejemplo, el nivel de satisfacción de un cliente.
+  * **Nominales**. No existe un orden entre las categorías. Por ejemplo, el color de los ojos.
+  * **Binarios**. Solo puede tomar dos valores. Por ejemplo, sí o no, verdadero o falso, etc.
+* **Enteros**. Los datos enteros son números enteros. Por ejemplo, el número de estudiantes en una clase, el número de caras al lanzar una moneda, etc.
+
 
 ```{r}
 # Crear un vector con datos nominales
-colores_camisetas <- c("rojo", "azul", "verde", "azul", "rojo")
-
-# Tabla de frecuencias
-table(colores_camisetas)
-```
-
-Aquí, `niveles_educacion` es un factor con orden. Los niveles de educación tienen un orden inherente: primaria, secundaria y universitaria.
-
-```{r}
-# Crear un factor con datos ordinales
-niveles_educacion <- factor(c("primaria", "universitaria", "secundaria", "secundaria", "universitaria"), 
-                            levels = c("primaria", "secundaria", "universitaria"), 
+datos_dicretos_nominales <- c("rojo", "azul", "verde", "azul", "rojo")
+datos_dicretos_ordinales <- factor(c("satisfactorio", "satisfactorio", "satisfactorio", "muy satisfactorio", "poco satisfactorio"), 
+                            levels = c("poco satisfactorio", "satisfactorio", "muy satisfactorio"), 
                             ordered = TRUE)
+datos_dicretos_binarios <- c("si", "no", "si", "si", "no")
+datos_discretos_enteros <- c(1, 2, 3, 4, 5)
 
 # Tabla de frecuencia
-table(niveles_educacion)
+table(datos_dicretos_ordinales)
 ```
 
-### Datos Cuantitativos
+### Datos Continuos
 
-Los datos cuantitativos describen cantidades. Se expresan en números y se pueden realizar operaciones aritméticas con ellos. Por ejemplo, la edad, el peso, la altura, etc.
+Los datos continuos pueden tomar cualquier valor en un intervalo especificado y las posibilidades son infinitas porque no hay huecos en el continuo. Es decir, para dos números cualesquiera elegidos en esta escala, es posible que el resultado alcance cualquier valor entre estos dos valores. Por ejemplo, una persona puede medir 165,26789 cm, suponiendo que el instrumento de medida sea lo suficientemente preciso.   
 
-Dentro de los datos cuantitativos, podemos distinguir entre:
-
-* **Discretos**. Los valores posibles son numerables. Por ejemplo, el número de hijos.
-* **Continuos**. Los valores posibles son infinitos. Por ejemplo, la altura.
-
-Este ejemplo muestra un vector con el número de estudiantes en diferentes clases, un claro ejemplo de datos discretos que son contables.
-
-```{r}
-# Crear un vector con datos discretos
-numero_estudiantes <- c(25, 30, 22, 28, 31)
-
-# Calcular estadísticas básicas
-summary(numero_estudiantes)
-```
-
-En este caso, altura_estudiantes representa un conjunto de datos continuos, ya que la altura puede tomar cualquier valor en un rango y puede ser tan precisa como se desee.
+En este ejemplo, `altura_estudiantes` representa un conjunto de datos continuos, ya que la altura puede tomar cualquier valor en un rango y puede ser tan precisa como se desee.
 
 ```{r}
 # Crear un vector con datos continuos
@@ -284,6 +271,89 @@ donde:
 * **Toma de Decisiones bajo Incertidumbre**: En finanzas y economía, el Teorema de Bayes se utiliza para actualizar las probabilidades de los resultados económicos basándose en nueva información, como cambios en las políticas económicas o indicadores del mercado.
 
 * **Ciencias Forenses**: En el análisis forense, el Teorema de Bayes puede ayudar a evaluar la evidencia. Por ejemplo, si se encuentra una huella dactilar en una escena del crimen, el teorema puede utilizarse para calcular la probabilidad de que pertenezca a un sospechoso, dados los patrones de huellas dactilares de la población en general.
+
+## Variables aleatorias discretas
+
+Son aquellas que toman valores específicos y contables. Por ejemplo, el número de carros que pasan por un punto en una hora, o el número de estudiantes que aprueban un examen. Los valores que puede tomar una variable aleatoria discreta son finitos o infinitos contables (como el conjunto de los números enteros).
+
+```{r}
+# En R, podemos usar dbinom para la función de probabilidad de una distribución binomial
+# Por ejemplo, la probabilidad de obtener 3 éxitos en 5 ensayos con p = 0.5
+probabilidad <- dbinom(3, size = 5, prob = 0.5)
+probabilidad
+```
+
+* **Valores Discretos y Contables**: las variables aleatorias discretas toman valores específicos y contables. Pueden ser finitas o infinitamente contables.
+
+### Función de probabilidad
+
+La función de probabilidad es una función que asigna una probabilida a cada posible valor de una variable aleatoria discreta. Matemáticamente, para una variable aleatoria discreta $X$, la función de probabilidad se define como $P(X=x)$, que es la probabilidad de que $X$ tome el valor $x$.
+
+Características:
+
+* **No negatividad**: $P(X = x) \geq 0$ para todo $x$.
+* **Normalización**: $\sum_{x} P(X = x) = 1$.
+
+### Función de distribución acumulada
+
+La función de distribución acumulada (FDA) es una función que asigna una probabilidad acumulada a cada posible valor de una variable aleatoria discreta. Matemáticamente, para una variable aleatoria discreta $X$, la función de distribución acumulada se define como $F(x) = P(X \leq x)$, que es la probabilidad de que $X$ tome un valor menor o igual a $x$.
+
+La FDA es una función escalonada para el caso discreto, que aumenta en los puntos donde la variable aleatoria tiene probabilidad positiva. Se define como la suma de las probabilidades de los resultados hasta un cierto punto.
+
+$$
+F(x) = P(X \leq x) = \sum_{y \leq x} P(X = y)
+$$
+#### Ejemplo
+
+Consideremos una variable aleatoria discreta $X$ que representa el número de caras obtenidas al lanzar un dado tres veces. La FDA de $X \leq 2$ es $F(2) = P(X \leq 2) = P(X = 0) + P(X = 1) + P(X = 2) = 1/8 + 3/8 + 3/8 = 7/8 = 0.875$.
+Es decir, la probabilidad de obtener 2 o menos caras se calcula sumando las probabilidades de obtener 0, 1 o 2 caras.
+
+```{r}
+n <- 3
+p <- 0.5
+
+# Calculamos la FDA para x=2
+fda <- pbinom(2, size = n, prob = p)
+fda
+```
+
+
+### Ejemplo
+
+Aquí ilustraremos como se pueden mostrar tanto la función de probabilidad como la función de distribución acumulada de una variable aleatoria discreta. Este ejemplo mostrará la probabilidad de obtener un cierto número de éxitos en una serie de ensayos, así como la probabilidad acumulada hasta ese número de éxitos.
+
+Vamos a usar una distribución binomial con los siguientes parámetros: 
+
+* $n = 10$, el número de ensayos.
+* $p = 0.5$, la probabilidad de éxito en cada ensayo.
+
+```{r}
+n <- 10
+p <- 0.5
+
+valores <- 0:n
+
+```
+
+## Variables aleatorias continuas
+
+Son aquellas que pueden tomar cualquier valor dentro de un intervalo. Por ejemplo, la altura de una persona, la temperatura de un día, etc. Los valores que puede tomar una variable aleatoria continua son infinitos no contables (como el conjunto de los números reales).
+
+### Función de Densidad de Probabilidad
+
+Para variables continuas no podemos hablar de probabilidades en puntos específicos, sino de densidades. La Función de Densidad de Probabilidad (PDF), describe la probabilidad relativa de que la variable aleatoria tome un valor dado. Esta función se denota como $f(x)$, no nos da las probabilidades directamente, pero el área bajo la curva de la función entre dos puntos nos da la probabilidad de que la variable caiga dentro de ese intervalo.
+
+Características:
+
+* **No negatividad**: $f(x) \geq 0$ para todo $x$.
+* **Normalización**: $\int_{-\infty}^{\infty} f(x) dx = 1$.
+
+```{r}
+# En R, podemos usar dnorm para la función de densidad de una distribución normal
+# Por ejemplo, la probabilidad de obtener un valor entre 0 y 1 en una distribución normal con media 0 y desviación estándar 1
+densidad <- dnorm(0, mean = 0, sd = 1)
+densidad
+```
 
 # Estadística Descriptiva
 
