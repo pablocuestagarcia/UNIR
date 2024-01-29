@@ -2,7 +2,9 @@
 title: "Tests"
 author: "Pablo de la Cuesta García"
 date: "2024-01-21"
-output: word_document
+output:
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
