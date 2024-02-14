@@ -134,11 +134,79 @@ $$
 
 
 
+# Test 5
 
+## Pregunta 7
 
+Se tira un dado cuatro veces, se define la variable $X$ como *el número de veces que se obtiene un resultado menor que 4*, ¿Cuál es la probabilidad de que ocurra $X=3$?
 
+### Respuesta
 
+Comencemos por entender el experimento y la variable aleatoria $X$.
 
+El experimento consiste en tirar un dado cuatro veces. Cada vez que se tira el dado, se obtiene un número entre 1 y 6. Por lo tanto, la variable aleatoria $X$ puede tomar los valores 0, 1, 2, 3 y 4. El valor de $X$ es el número de veces que se obtiene un resultado menor que 4. Por lo tanto, $X = x$ podrá obtener los valores 1, 2 y 3.
+
+El objetivo es calcular la probabilidad de que $X = 3$, lo que significa que en tres de las cuatro tiradas obtenemos un número menor que 4.
+
+Para este problema, utilizaremos la distribución binomial. La distribución binomial es apropiada cuando se tienen las siguientes condiciones:
+
+* Hay un número fijo de ensayos.
+* Cada ensayo es independiente.
+* Cada ensayo tiene dos resultados posibles: éxito o fracaso.
+* La probabilidad de éxito es la misma para cada ensayo.
+
+La probabilidad de éxito, es decir, la probabilidad de obtener un número menor que 4 en una sola tirada, es $P(\text{éxito}) = P(X<4) = \dfrac{3}{6} = 0.5$. Ya que hay tres resultados favorables (1, 2 y 3) y seis resultados posibles (1, 2, 3, 4, 5 y 6). La probabilidad de fracaso es $P(\text{fracaso}) = P(X \geq 4) = \dfrac{3}{6} = 0.5$.
+
+La fórmula de la distribución binomial para calcular la probabilidad de obtener exactamente $k$ éxitos en $n$ ensayos es:
+
+$$
+P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$
+Donde:
+
+* $\bino{n}{k}$ es el coeficiente binomial, que representa el número de formas en que pueden elegirse $k$ éxitos en $n$ ensayos.
+* $p$ es la probabilidad de éxito.
+* $1-p$ es la probabilidad de fracaso.
+
+Para nuestro ejercicio queremos calcualr $P(X = 3)$, por lo que $k = 3$, $n = 4$, $p = 0.5$ y $1-p = 0.5$. Sustituyendo en la fórmula, obtenemos:
+
+$$
+P(X = 3) = \binom{4}{3} 0.5^3 0.5^{4-3} = 4 \cdot 0.5^4 = 0.25
+$$
+Por tanto la probabilidad de que $X = 3$ es $0.25$.
+
+Para visualizar esto, podemos crear una gráfica de la distribución binomial de $X$. Generaré una gráfica donde se muestre la probabilidad de obtener $k$ éxitos (es decir, $k$ resultados menores que 4) para $k$ entre 0 y 4.
+
+```{r}
+# Cargar la biblioteca para gráficos
+library(ggplot2)
+
+# Parámetros de la distribución binomial
+n <- 4  # número de ensayos
+p <- 1/2  # probabilidad de éxito
+
+# Crear un vector con los posibles números de éxitos
+k <- 0:n
+
+# Calcular las probabilidades binomiales
+probabilidades <- dbinom(k, size = n, prob = p)
+
+# Crear un data frame para el gráfico
+data <- data.frame('Éxitos' = k, 'Probabilidad' = probabilidades)
+
+# Crear el gráfico de barras
+ggplot(data, aes(x = Éxitos, y = Probabilidad)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  xlab("Número de éxitos (X)") +
+  ylab("Probabilidad") +
+  ggtitle("Distribución Binomial de X (número de veces con resultado < 4)") +
+  theme_minimal()
+
+```
+
+La gráfica muestra la distribución binomial de la variable $X$ para nuestro experimento. Cada barra representa la probabilidad de obtener un cierto número de éxitos en las cuatro tiradas del dado.
+
+Como se puede observar, la probabilidad de obtener exactamente 3 éxitos es 0.25, como se calculó anteriormente.
 
 
 
