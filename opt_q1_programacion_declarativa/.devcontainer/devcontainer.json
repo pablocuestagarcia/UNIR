@@ -1,0 +1,14 @@
+{
+    "name": "Haskell",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+    },
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "haskell.haskell"
+        ]
+      }
+    }
+  }

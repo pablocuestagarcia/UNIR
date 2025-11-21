@@ -1,0 +1,39 @@
+name: mi-proyecto-haskell
+version: 0.1.0.0
+synopsis: Mi proyecto Haskell con Dev Containers
+description: Proyecto de ejemplo usando Dev Containers
+license: BSD3
+author: Tu Nombre
+maintainer: tu@email.com
+
+dependencies:
+  - base >= 4.7 && < 5
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wpartial-fields
+  - -Wredundant-constraints
+
+executables:
+  mi-proyecto-exe:
+    main: Main.hs
+    source-dirs: src
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+
+tests:
+  mi-proyecto-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - hspec
