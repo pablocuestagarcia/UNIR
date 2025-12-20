@@ -18,6 +18,12 @@ ghc-options:
   - -Wpartial-fields
   - -Wredundant-constraints
 
+library:
+  source-dirs: src
+  exposed-modules:
+    - MathUtils
+    - Calculator
+
 executables:
   mi-proyecto-exe:
     main: Main.hs
@@ -36,4 +42,5 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
+      - mi-proyecto-haskell
       - hspec
