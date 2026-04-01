@@ -52,19 +52,41 @@ func main() {
 		Value any
 	}
 
+	type HashMapFixed struct {
+		data [][1]KeyValue
+		size int
+	}
+
 	type HashMap struct {
 		data [][]KeyValue
 		size int
 	}
 
-	h := HashMap{
+	h := HashMapFixed{
+		data: make([][1]KeyValue, 4),
+		size: 4,
+	}
+
+	h_dynamic := HashMap{
 		data: make([][]KeyValue, 4),
 		size: 4,
 	}
 
+	h.data[0] = [1]KeyValue{KeyValue{Key: "apple", Value: 1}}
+	h.data[1] = [1]KeyValue{KeyValue{Key: "banana", Value: 2}}
+	h.data[2] = [1]KeyValue{KeyValue{Key: "cherry", Value: 3}}
+	h.data[3] = [1]KeyValue{KeyValue{Key: "date", Value: 4}}
+	
 	fmt.Println("Ejemplo:", h)
-
 	fmt.Println("Get:", h.data[1])
+
+	h_dynamic.data[0] = []KeyValue{KeyValue{Key: "apple", Value: 1}}
+	h_dynamic.data[1] = []KeyValue{KeyValue{Key: "banana", Value: 2}, KeyValue{Key: "cherry", Value: 3}}
+	h_dynamic.data[2] = []KeyValue{KeyValue{Key: "cherry", Value: 3}}
+	h_dynamic.data[3] = []KeyValue{KeyValue{Key: "date", Value: 4}}
+	
+	fmt.Println("Ejemplo:", h_dynamic)
+	fmt.Println("Get:", h_dynamic.data[1])
 
 	
 }

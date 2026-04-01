@@ -1,0 +1,27 @@
+El fichero entrada1.txt contiene todos los tokens del lenguaje, y al ser procesado por el programa de prueba debe generar el fichero salida1.txt.
+
+
+Los ficheros de prueba que contienen errores (entrada2.txt y entrada3.txt), además de generar un fichero de salida correspondiente, muestran un mensaje por según se indica continuación:
+
+entrada2.txt
+============
+
+Genera el fichero de salida salida2.txt y muestra el siguiente mensaje:
+
+
+****ERROR MORFOLÓGICO EN [lin 8, col 4]: IDENTIFICADOR DEMASIADO LARGO (x0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789)
+
+
+entrada3.txt
+============
+
+Genera el fichero de salida salida3.txt y muestra por stderr el siguiente mensaje:
+
+
+****ERROR MORFOLÓGICO EN [lin 8, col 4]: simbolo no permitido (&)
+
+
+
+
+
+

@@ -172,104 +172,113 @@ func main() {
 	fmt.Println("=== IMPLEMENTACIÓN DE HASH TABLE DESDE CERO ===\n")
 
 	// Crear una hash table con tamaño 50
-	myHashTable := NewHashTable(50)
+	myHashTable := NewHashTable(2)
 
 	// 1. SET - Insertar valores
 	fmt.Println("1. Insertando valores con Set():")
-	myHashTable.Set("grapes", 10000)
+	myHashTable.Set("grapes", 10000)	
 	myHashTable.Set("apples", 54)
 	myHashTable.Set("oranges", 2)
 	myHashTable.Set("bananas", 17)
-	fmt.Println("   Valores insertados: grapes, apples, oranges, bananas")
+	fmt.Println("Ejemplo:", myHashTable)
+	// fmt.Println("   Valores insertados: grapes, apples, oranges, bananas")
 
-	// 2. GET - Obtener valores
-	fmt.Println("\n2. Obteniendo valores con Get():")
-	if value, exists := myHashTable.Get("grapes"); exists {
-		fmt.Printf("   grapes = %v\n", value)
-	}
-	if value, exists := myHashTable.Get("apples"); exists {
-		fmt.Printf("   apples = %v\n", value)
-	}
+	// // 2. GET - Obtener valores
+	// fmt.Println("\n2. Obteniendo valores con Get():")
+	// if value, exists := myHashTable.Get("grapes"); exists {
+	// 	fmt.Printf("   grapes = %v\n", value)
+	// }
+	// if value, exists := myHashTable.Get("apples"); exists {
+	// 	fmt.Printf("   apples = %v\n", value)
+	// }
 
-	// Intentar obtener una clave que no existe
-	if value, exists := myHashTable.Get("pears"); !exists {
-		fmt.Printf("   pears = NO EXISTE (returned: %v)\n", value)
-	}
+	// // Intentar obtener una clave que no existe
+	// if value, exists := myHashTable.Get("pears"); !exists {
+	// 	fmt.Printf("   pears = NO EXISTE (returned: %v)\n", value)
+	// }
 
-	// 3. KEYS - Obtener todas las claves
-	fmt.Println("\n3. Obteniendo todas las claves con Keys():")
-	keys := myHashTable.Keys()
-	fmt.Printf("   %v\n", keys)
+	// // 3. KEYS - Obtener todas las claves
+	// fmt.Println("\n3. Obteniendo todas las claves con Keys():")
+	// keys := myHashTable.Keys()
+	// fmt.Printf("   %v\n", keys)
 
-	// 4. VALUES - Obtener todos los valores
-	fmt.Println("\n4. Obteniendo todos los valores con Values():")
-	values := myHashTable.Values()
-	fmt.Printf("   %v\n", values)
+	// // 4. VALUES - Obtener todos los valores
+	// fmt.Println("\n4. Obteniendo todos los valores con Values():")
+	// values := myHashTable.Values()
+	// fmt.Printf("   %v\n", values)
 
-	// 5. SIZE - Obtener tamaño
-	fmt.Println("\n5. Tamaño de la tabla con Size():")
-	fmt.Printf("   Número de elementos: %d\n", myHashTable.Size())
+	// // 5. SIZE - Obtener tamaño
+	// fmt.Println("\n5. Tamaño de la tabla con Size():")
+	// fmt.Printf("   Número de elementos: %d\n", myHashTable.Size())
 
-	// 6. UPDATE - Actualizar un valor existente
-	fmt.Println("\n6. Actualizando valor existente:")
-	fmt.Printf("   grapes antes: ")
-	if value, exists := myHashTable.Get("grapes"); exists {
-		fmt.Printf("%v\n", value)
-	}
-	myHashTable.Set("grapes", 99999)
-	fmt.Printf("   grapes después: ")
-	if value, exists := myHashTable.Get("grapes"); exists {
-		fmt.Printf("%v\n", value)
-	}
+	// // 6. UPDATE - Actualizar un valor existente
+	// fmt.Println("\n6. Actualizando valor existente:")
+	// fmt.Printf("   grapes antes: ")
+	// if value, exists := myHashTable.Get("grapes"); exists {
+	// 	fmt.Printf("%v\n", value)
+	// }
+	// myHashTable.Set("grapes", 99999)
+	// fmt.Printf("   grapes después: ")
+	// if value, exists := myHashTable.Get("grapes"); exists {
+	// 	fmt.Printf("%v\n", value)
+	// }
 
-	// 7. DELETE - Eliminar un elemento
-	fmt.Println("\n7. Eliminando elementos con Delete():")
-	fmt.Printf("   Eliminando 'oranges'... ")
-	if myHashTable.Delete("oranges") {
-		fmt.Println("ÉXITO")
-	}
-	fmt.Printf("   Tamaño después de eliminar: %d\n", myHashTable.Size())
+	// // 7. DELETE - Eliminar un elemento
+	// fmt.Println("\n7. Eliminando elementos con Delete():")
+	// fmt.Printf("   Eliminando 'oranges'... ")
+	// if myHashTable.Delete("oranges") {
+	// 	fmt.Println("ÉXITO")
+	// }
+	// fmt.Printf("   Tamaño después de eliminar: %d\n", myHashTable.Size())
 
-	// 8. COLISIONES - Demostrar manejo de colisiones
-	fmt.Println("\n8. Manejo de colisiones:")
-	fmt.Println("   Insertando múltiples elementos que podrían colisionar...")
+	// // 8. COLISIONES - Demostrar manejo de colisiones
+	// fmt.Println("\n8. Manejo de colisiones:")
+	// fmt.Println("   Insertando múltiples elementos que podrían colisionar...")
 
-	// Crear una tabla pequeña para forzar colisiones
-	smallTable := NewHashTable(10)
-	smallTable.Set("cat", 1)
-	smallTable.Set("dog", 2)
-	smallTable.Set("bird", 3)
-	smallTable.Set("fish", 4)
-	smallTable.Set("hamster", 5)
-	smallTable.Set("rabbit", 6)
-	smallTable.Set("turtle", 7)
-	smallTable.Set("snake", 8)
+	// // Crear una tabla pequeña para forzar colisiones
+	// smallTable := NewHashTable(10)
+	// smallTable.Set("cat", 1)
+	// smallTable.Set("dog", 2)
+	// smallTable.Set("bird", 3)
+	// smallTable.Set("fish", 4)
+	// smallTable.Set("hamster", 5)
+	// smallTable.Set("rabbit", 6)
+	// smallTable.Set("turtle", 7)
+	// smallTable.Set("snake", 8)
 
-	fmt.Println("\n   Tabla pequeña (size=10) con 8 elementos:")
-	smallTable.Print()
+	// fmt.Println("\n   Tabla pequeña (size=10) con 8 elementos:")
+	// smallTable.Print()
 
-	// 9. TIPOS DE DATOS - Diferentes tipos de valores
-	fmt.Println("\n9. Almacenando diferentes tipos de datos:")
-	mixedTable := NewHashTable(20)
-	mixedTable.Set("number", 42)
-	mixedTable.Set("string", "Hello, World!")
-	mixedTable.Set("boolean", true)
-	mixedTable.Set("float", 3.14159)
-	mixedTable.Set("slice", []int{1, 2, 3, 4, 5})
+	// // 9. TIPOS DE DATOS - Diferentes tipos de valores
+	// fmt.Println("\n9. Almacenando diferentes tipos de datos:")
+	// mixedTable := NewHashTable(20)
+	// mixedTable.Set("number", 42)
+	// mixedTable.Set("string", "Hello, World!")
+	// mixedTable.Set("boolean", true)
+	// mixedTable.Set("float", 3.14159)
+	// mixedTable.Set("slice", []int{1, 2, 3, 4, 5})
 
-	type Person struct {
-		Name string
-		Age  int
-	}
-	mixedTable.Set("struct", Person{Name: "Alice", Age: 30})
+	// type Person struct {
+	// 	Name string
+	// 	Age  int
+	// }
+	// mixedTable.Set("struct", Person{Name: "Alice", Age: 30})
 
-	fmt.Println("   Valores de diferentes tipos:")
-	for _, key := range mixedTable.Keys() {
-		value, _ := mixedTable.Get(key)
-		fmt.Printf("   %s = %v (type: %T)\n", key, value, value)
-	}
+	// fmt.Println("   Valores de diferentes tipos:")
+	// for _, key := range mixedTable.Keys() {
+	// 	value, _ := mixedTable.Get(key)
+	// 	fmt.Printf("   %s = %v (type: %T)\n", key, value, value)
+	// }
 
-	// 10. PRINT - Visualizar estructura interna
-	fmt.Println("\n10. Visualización completa de la tabla hash original:")
-	myHashTable.Print()
+	// // 10. PRINT - Visualizar estructura interna
+	// fmt.Println("\n10. Visualización completa de la tabla hash original:")
+	// myHashTable.Print()
+}
+
+func RecurringNumber(array []int) int {
+	
+	// Inicializamos la hash table
+	hashTable := NewHashTable(len(array))
+
+
 }

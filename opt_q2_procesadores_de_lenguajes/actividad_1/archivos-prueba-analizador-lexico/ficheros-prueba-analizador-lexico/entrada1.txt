@@ -1,0 +1,34 @@
+// Todos los tokens del lenguaje
+
+
+// PALABRA RESERVADA
+main
+int
+boolean
+if
+else
+while
+scanf
+printf
+
+// SÍMBOLOS
+;
+()
+{}
+=
++  -  /  *
+&& || !
+== != <= >= < >
+
+// IDENTIFICADORES
+identificador
+a
+v8
+
+// CONSTANTES
+
+1234
+09
+5
+true
+false
