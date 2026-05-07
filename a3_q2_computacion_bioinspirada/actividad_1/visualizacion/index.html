@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Grey Wolf Optimizer · Visualización TSP</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f6fa; color: #2c3e50; line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: #ecf0f1; padding: 20px 30px;
+  }
+  header h1 { margin: 0 0 4px 0; font-size: 1.6rem; font-weight: 600; }
+  header p { margin: 0; opacity: 0.85; font-size: 0.9rem; }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .stage {
+    background: white; border-radius: 10px; padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  canvas { display: block; width: 100%; background: #fafbfc; border-radius: 6px; }
+  #conv-canvas { height: 130px; margin-top: 10px; }
+  .panel {
+    background: white; border-radius: 10px; padding: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .panel h3 {
+    margin: 0 0 12px 0; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.5px; color: #7f8c8d;
+    border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;
+  }
+  .panel + .panel { margin-top: 14px; }
+  .control { margin-bottom: 12px; }
+  .control label {
+    display: flex; justify-content: space-between;
+    font-size: 0.82rem; margin-bottom: 4px; color: #34495e;
+  }
+  .control input[type="range"] { width: 100%; cursor: pointer; }
+  .btn {
+    background: #3498db; color: white; border: none;
+    padding: 8px 14px; border-radius: 6px; font-size: 0.85rem;
+    cursor: pointer; flex: 1; font-weight: 500;
+    transition: background 0.15s;
+  }
+  .btn:hover:not(:disabled) { background: #2980b9; }
+  .btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+  .btn.secondary { background: #95a5a6; }
+  .btn.secondary:hover:not(:disabled) { background: #7f8c8d; }
+  .btn.danger { background: #e74c3c; }
+  .btn.danger:hover:not(:disabled) { background: #c0392b; }
+  .btn-row { display: flex; gap: 6px; margin-top: 6px; }
+  .stat {
+    display: flex; justify-content: space-between;
+    padding: 4px 0; font-size: 0.85rem;
+    border-bottom: 1px dashed #ecf0f1;
+  }
+  .stat:last-child { border-bottom: none; }
+  .stat .v { font-weight: 600; font-family: "SF Mono", Monaco, monospace; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; font-size: 0.8rem; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .swatch { width: 14px; height: 3px; border-radius: 2px; }
+  .info {
+    background: #fffaef; border-left: 3px solid #f39c12;
+    padding: 10px 14px; border-radius: 4px; font-size: 0.82rem;
+    margin-top: 14px;
+  }
+  .info strong { color: #c0392b; }
+  footer {
+    text-align: center; color: #95a5a6; font-size: 0.78rem;
+    padding: 14px; margin-top: 6px;
+  }
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Grey Wolf Optimizer aplicado al Travelling Salesman Problem</h1>
+  <p>Visualización interactiva del DGWO · Pablo de la Cuesta García · Computación Bioinspirada</p>
+</header>
+
+<div class="container">
+
+  <div class="stage">
+    <canvas id="map" width="800" height="600"></canvas>
+    <canvas id="conv-canvas" width="800" height="130"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:#e74c3c"></span> α (líder)</span>
+      <span><span class="swatch" style="background:#3498db"></span> β (segundo)</span>
+      <span><span class="swatch" style="background:#27ae60"></span> δ (tercero)</span>
+      <span><span class="swatch" style="background:#bdc3c7"></span> ω (resto)</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h3>Parámetros</h3>
+      <div class="control">
+        <label>Ciudades <span id="lbl-cities">25</span></label>
+        <input id="cities" type="range" min="8" max="60" value="25">
+      </div>
+      <div class="control">
+        <label>Lobos <span id="lbl-wolves">25</span></label>
+        <input id="wolves" type="range" min="5" max="80" value="25">
+      </div>
+      <div class="control">
+        <label>Velocidad <span id="lbl-speed">10</span> it/s</label>
+        <input id="speed" type="range" min="1" max="60" value="10">
+      </div>
+      <div class="control">
+        <label>2-opt prob. <span id="lbl-twoopt">0.10</span></label>
+        <input id="twoopt" type="range" min="0" max="100" value="10">
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btn-run">▶ Ejecutar</button>
+        <button class="btn secondary" id="btn-step">Paso</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn danger" id="btn-reset">Nueva instancia</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Estado</h3>
+      <div class="stat"><span>Iteración</span><span class="v" id="s-iter">0</span></div>
+      <div class="stat"><span>Mejor longitud (α)</span><span class="v" id="s-best">—</span></div>
+      <div class="stat"><span>Longitud β</span><span class="v" id="s-beta">—</span></div>
+      <div class="stat"><span>Longitud δ</span><span class="v" id="s-delta">—</span></div>
+      <div class="stat"><span>Parámetro a</span><span class="v" id="s-a">2.000</span></div>
+      <div class="stat"><span>NN baseline</span><span class="v" id="s-nn">—</span></div>
+      <div class="stat"><span>Mejora vs NN</span><span class="v" id="s-impr">—</span></div>
+    </div>
+
+    <div class="info">
+      <strong>Cómo leer la animación:</strong> los lobos compiten por el mejor recorrido
+      sobre las ciudades. En cada iteración el resto de la manada (gris) se actualiza
+      cruzando con α/β/δ (rojo/azul/verde) y mutando. El parámetro <code>a</code> decrece
+      de 2 a 0 — al inicio domina la exploración (más swaps), al final la explotación
+      (más cruces y 2-opt).
+    </div>
+  </div>
+
+</div>
+
+<footer>Implementación independiente · sin dependencias externas · Actividad 1 Computación Bioinspirada · UNIR</footer>
+
+<script>
+// =====================================================================
+//  DGWO para TSP - Implementación JavaScript
+// =====================================================================
+"use strict";
+
+const COLORS = {
+  alpha: "#e74c3c",
+  beta:  "#3498db",
+  delta: "#27ae60",
+  omega: "#bdc3c7",
+  city:  "#2c3e50"
+};
+
+const map = document.getElementById("map");
+const ctx = map.getContext("2d");
+const conv = document.getElementById("conv-canvas");
+const ctxc = conv.getContext("2d");
+
+const els = {
+  cities:   document.getElementById("cities"),
+  wolves:   document.getElementById("wolves"),
+  speed:    document.getElementById("speed"),
+  twoopt:   document.getElementById("twoopt"),
+  lblCities:document.getElementById("lbl-cities"),
+  lblWolves:document.getElementById("lbl-wolves"),
+  lblSpeed: document.getElementById("lbl-speed"),
+  lblTwoopt:document.getElementById("lbl-twoopt"),
+  iter:     document.getElementById("s-iter"),
+  best:     document.getElementById("s-best"),
+  betaSt:   document.getElementById("s-beta"),
+  deltaSt:  document.getElementById("s-delta"),
+  aSt:      document.getElementById("s-a"),
+  nnSt:     document.getElementById("s-nn"),
+  imprSt:   document.getElementById("s-impr"),
+  btnRun:   document.getElementById("btn-run"),
+  btnStep:  document.getElementById("btn-step"),
+  btnReset: document.getElementById("btn-reset")
+};
+
+// ---------- estado global ----------
+let state = null;
+let running = false;
+let lastTime = 0;
+let MAX_ITER = 600;
+
+// ---------- utilidades ----------
+function rngInt(n) { return Math.floor(Math.random() * n); }
+
+function randperm(n) {
+  const a = Array.from({length: n}, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = rngInt(i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function distance(a, b) {
+  const dx = a[0] - b[0], dy = a[1] - b[1];
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function buildDistMatrix(cities) {
+  const n = cities.length;
+  const D = Array.from({length: n}, () => new Float64Array(n));
+  for (let i = 0; i < n; i++)
+    for (let j = i+1; j < n; j++) {
+      const d = distance(cities[i], cities[j]);
+      D[i][j] = D[j][i] = d;
+    }
+  return D;
+}
+
+function tourLength(tour, D) {
+  let s = 0;
+  for (let i = 0; i < tour.length; i++)
+    s += D[tour[i]][tour[(i+1) % tour.length]];
+  return s;
+}
+
+function nearestNeighbourTour(D) {
+  const n = D.length;
+  const visited = new Array(n).fill(false);
+  const tour = [0]; visited[0] = true;
+  for (let k = 1; k < n; k++) {
+    let last = tour[k-1], best = -1, bestD = Infinity;
+    for (let j = 0; j < n; j++)
+      if (!visited[j] && D[last][j] < bestD) { bestD = D[last][j]; best = j; }
+    tour.push(best); visited[best] = true;
+  }
+  return tour;
+}
+
+// Order Crossover (OX)
+function orderCrossover(p1, p2) {
+  const n = p1.length;
+  let i1 = rngInt(n), i2 = rngInt(n);
+  if (i1 > i2) [i1, i2] = [i2, i1];
+  const child = new Array(n).fill(-1);
+  const seg = new Set();
+  for (let k = i1; k <= i2; k++) { child[k] = p1[k]; seg.add(p1[k]); }
+  let pos = (i2 + 1) % n;
+  for (let k = 0; k < n; k++) {
+    const v = p2[(i2 + 1 + k) % n];
+    if (!seg.has(v)) {
+      child[pos] = v;
+      pos = (pos + 1) % n;
+    }
+  }
+  return child;
+}
+
+function swapMutation(tour, n_swaps) {
+  const t = tour.slice();
+  const n = t.length;
+  for (let k = 0; k < n_swaps; k++) {
+    const i = rngInt(n), j = rngInt(n);
+    [t[i], t[j]] = [t[j], t[i]];
+  }
+  return t;
+}
+
+// 2-opt una pasada
+function twoOpt(tour, D) {
+  const n = tour.length;
+  let best = tour.slice();
+  let bestLen = tourLength(best, D);
+  let improved = true, passes = 0;
+  while (improved && passes < 1) {
+    improved = false; passes++;
+    for (let i = 0; i < n - 2; i++) {
+      for (let j = i + 1; j < n - 1; j++) {
+        const a = best[i], b = best[i+1], c = best[j], d = best[j+1];
+        const delta = (D[a][c] + D[b][d]) - (D[a][b] + D[c][d]);
+        if (delta < -1e-10) {
+          // reverse subsegment i+1..j
+          let lo = i+1, hi = j;
+          while (lo < hi) { [best[lo], best[hi]] = [best[hi], best[lo]]; lo++; hi--; }
+          bestLen += delta;
+          improved = true;
+        }
+      }
+    }
+  }
+  return [best, bestLen];
+}
+
+// ---------- Instancia ----------
+function makeInstance(nCities) {
+  const W = map.width, H = map.height, M = 30;
+  const cities = [];
+  for (let i = 0; i < nCities; i++) {
+    cities.push([
+      M + Math.random() * (W - 2*M),
+      M + Math.random() * (H - 2*M)
+    ]);
+  }
+  return cities;
+}
+
+// ---------- DGWO state ----------
+function initOptimizer() {
+  const nCities = parseInt(els.cities.value);
+  const nWolves = parseInt(els.wolves.value);
+  const cities = makeInstance(nCities);
+  const D = buildDistMatrix(cities);
+
+  const wolves = []; const fitness = [];
+  for (let i = 0; i < nWolves; i++) {
+    const w = randperm(nCities);
+    wolves.push(w);
+    fitness.push(tourLength(w, D));
+  }
+
+  const nn = nearestNeighbourTour(D);
+  const nnLen = tourLength(nn, D);
+
+  state = {
+    cities, D, wolves, fitness,
+    nWolves, nCities,
+    iter: 0, maxIter: MAX_ITER,
+    nnTour: nn, nnLen,
+    convergence: [],
+    leaders: null
+  };
+  updateLeaders();
+  state.convergence.push(state.leaders.fA);
+  drawAll();
+  updateStats();
+}
+
+function updateLeaders() {
+  const idx = state.fitness
+    .map((f, i) => [f, i]).sort((a,b) => a[0] - b[0]);
+  state.leaders = {
+    alphaIdx: idx[0][1], fA: idx[0][0],
+    betaIdx:  idx[1][1], fB: idx[1][0],
+    deltaIdx: idx[2][1], fD: idx[2][0]
+  };
+}
+
+function step() {
+  if (!state || state.iter >= state.maxIter) return;
+  const { D, wolves, fitness, nWolves, maxIter } = state;
+  const t = state.iter;
+  const a = 2 - 2*t / Math.max(maxIter - 1, 1);
+  const pTwoOpt = parseInt(els.twoopt.value) / 100;
+
+  const alpha = wolves[state.leaders.alphaIdx];
+  const beta  = wolves[state.leaders.betaIdx];
+  const delta = wolves[state.leaders.deltaIdx];
+
+  for (let i = 0; i < nWolves; i++) {
+    const A1 = 2*a*Math.random() - a;
+    const A2 = 2*a*Math.random() - a;
+    const A3 = 2*a*Math.random() - a;
+
+    let X1 = orderCrossover(wolves[i], alpha);
+    let X2 = orderCrossover(wolves[i], beta);
+    let X3 = orderCrossover(wolves[i], delta);
+    X1 = swapMutation(X1, Math.max(1, Math.round(Math.abs(A1))));
+    X2 = swapMutation(X2, Math.max(1, Math.round(Math.abs(A2))));
+    X3 = swapMutation(X3, Math.max(1, Math.round(Math.abs(A3))));
+    const f1 = tourLength(X1, D);
+    const f2 = tourLength(X2, D);
+    const f3 = tourLength(X3, D);
+    let newW, newF;
+    if (f1 <= f2 && f1 <= f3) { newW = X1; newF = f1; }
+    else if (f2 <= f3)        { newW = X2; newF = f2; }
+    else                      { newW = X3; newF = f3; }
+
+    if (Math.random() < pTwoOpt) {
+      const r = twoOpt(newW, D);
+      newW = r[0]; newF = r[1];
+    }
+
+    if (newF < fitness[i]) {
+      wolves[i] = newW;
+      fitness[i] = newF;
+    }
+  }
+  updateLeaders();
+  state.iter++;
+  state.convergence.push(state.leaders.fA);
+}
+
+// ---------- Render ----------
+function drawAll() {
+  drawMap();
+  drawConv();
+}
+
+function drawMap() {
+  const W = map.width, H = map.height;
+  ctx.clearRect(0, 0, W, H);
+  if (!state) return;
+  const { cities, wolves, leaders } = state;
+
+  // Lobos omega muy tenues
+  ctx.lineWidth = 0.5;
+  ctx.strokeStyle = "rgba(189,195,199,0.35)";
+  for (let i = 0; i < wolves.length; i++) {
+    if (i === leaders.alphaIdx || i === leaders.betaIdx || i === leaders.deltaIdx) continue;
+    drawTour(wolves[i], cities);
+  }
+  // Delta
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = COLORS.delta + "cc";
+  drawTour(wolves[leaders.deltaIdx], cities);
+  // Beta
+  ctx.lineWidth = 1.8;
+  ctx.strokeStyle = COLORS.beta + "dd";
+  drawTour(wolves[leaders.betaIdx], cities);
+  // Alpha (encima)
+  ctx.lineWidth = 2.6;
+  ctx.strokeStyle = COLORS.alpha;
+  drawTour(wolves[leaders.alphaIdx], cities);
+
+  // Ciudades
+  ctx.fillStyle = COLORS.city;
+  for (const c of cities) {
+    ctx.beginPath();
+    ctx.arc(c[0], c[1], 3.5, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawTour(tour, cities) {
+  ctx.beginPath();
+  ctx.moveTo(cities[tour[0]][0], cities[tour[0]][1]);
+  for (let i = 1; i < tour.length; i++)
+    ctx.lineTo(cities[tour[i]][0], cities[tour[i]][1]);
+  ctx.lineTo(cities[tour[0]][0], cities[tour[0]][1]);
+  ctx.stroke();
+}
+
+function drawConv() {
+  const W = conv.width, H = conv.height;
+  ctxc.clearRect(0, 0, W, H);
+  if (!state || state.convergence.length < 2) return;
+  const c = state.convergence;
+  const maxV = Math.max(...c, state.nnLen) * 1.02;
+  const minV = Math.min(...c) * 0.98;
+  // baseline NN
+  ctxc.strokeStyle = "#7f8c8d";
+  ctxc.setLineDash([4,4]);
+  ctxc.lineWidth = 1;
+  const yNN = H - ((state.nnLen - minV) / (maxV - minV)) * H;
+  ctxc.beginPath(); ctxc.moveTo(0, yNN); ctxc.lineTo(W, yNN); ctxc.stroke();
+  ctxc.setLineDash([]);
+
+  // curva
+  ctxc.strokeStyle = COLORS.alpha;
+  ctxc.lineWidth = 2;
+  ctxc.beginPath();
+  for (let i = 0; i < c.length; i++) {
+    const x = (i / Math.max(c.length-1, 1)) * W;
+    const y = H - ((c[i] - minV) / (maxV - minV)) * H;
+    if (i === 0) ctxc.moveTo(x, y); else ctxc.lineTo(x, y);
+  }
+  ctxc.stroke();
+
+  // texto
+  ctxc.fillStyle = "#7f8c8d";
+  ctxc.font = "11px sans-serif";
+  ctxc.fillText("convergencia α", 6, 14);
+  ctxc.fillText("NN: " + state.nnLen.toFixed(1), 6, H - 6);
+}
+
+function updateStats() {
+  if (!state) return;
+  const t = state.iter;
+  const a = 2 - 2*t / Math.max(state.maxIter - 1, 1);
+  els.iter.textContent = t;
+  els.best.textContent  = state.leaders.fA.toFixed(2);
+  els.betaSt.textContent  = state.leaders.fB.toFixed(2);
+  els.deltaSt.textContent = state.leaders.fD.toFixed(2);
+  els.aSt.textContent = a.toFixed(3);
+  els.nnSt.textContent = state.nnLen.toFixed(2);
+  const impr = 100 * (state.nnLen - state.leaders.fA) / state.nnLen;
+  els.imprSt.textContent = impr.toFixed(2) + "%";
+}
+
+// ---------- Animación ----------
+function loop(now) {
+  if (!running) return;
+  const targetFPS = parseInt(els.speed.value);
+  const interval = 1000 / targetFPS;
+  if (now - lastTime >= interval) {
+    step();
+    drawAll();
+    updateStats();
+    lastTime = now;
+    if (state.iter >= state.maxIter) { running = false; els.btnRun.textContent = "▶ Ejecutar"; return; }
+  }
+  requestAnimationFrame(loop);
+}
+
+// ---------- Eventos ----------
+els.cities.addEventListener("input", () => {
+  els.lblCities.textContent = els.cities.value;
+});
+els.wolves.addEventListener("input", () => {
+  els.lblWolves.textContent = els.wolves.value;
+});
+els.speed.addEventListener("input", () => {
+  els.lblSpeed.textContent = els.speed.value;
+});
+els.twoopt.addEventListener("input", () => {
+  els.lblTwoopt.textContent = (parseInt(els.twoopt.value)/100).toFixed(2);
+});
+
+els.btnRun.addEventListener("click", () => {
+  if (!state) initOptimizer();
+  running = !running;
+  els.btnRun.textContent = running ? "⏸ Pausar" : "▶ Ejecutar";
+  if (running) { lastTime = 0; requestAnimationFrame(loop); }
+});
+
+els.btnStep.addEventListener("click", () => {
+  if (!state) initOptimizer();
+  step(); drawAll(); updateStats();
+});
+
+els.btnReset.addEventListener("click", () => {
+  running = false;
+  els.btnRun.textContent = "▶ Ejecutar";
+  initOptimizer();
+});
+
+// Ajusta canvas a su contenedor (responsive)
+function resizeCanvas() {
+  const stage = map.parentElement;
+  const w = stage.clientWidth - 30;
+  map.width = w;
+  map.height = Math.round(w * 0.65);
+  conv.width = w;
+  conv.height = 130;
+  if (state) { drawAll(); }
+}
+window.addEventListener("resize", () => {
+  resizeCanvas();
+});
+
+// init
+resizeCanvas();
+initOptimizer();
+</script>
+</body>
+</html>
